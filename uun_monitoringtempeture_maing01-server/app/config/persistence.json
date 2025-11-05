@@ -1,0 +1,16 @@
+{
+  "uuSubAppDataStore": {
+    "primary": {
+      "type": "uuAppObjectStore",
+      "realization": "MongoDB",
+      "schemaMap": {
+        "monitoringtempetureMain": {
+          "realization": "dao/MonitoringtempetureMainMongo"
+        },
+        "device": {
+          "realization": "dao/DeviceMongo"
+        }
+      }
+    }
+  }
+}

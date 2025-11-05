@@ -1,0 +1,31 @@
+{
+  "product": "uun_monitoringtempeture_maing01",
+  "version": "0.1.0",
+  "license": "License Commercial",
+  "description": {
+    "en": "",
+    "cs": ""
+  },
+  "devkit": {
+    "development": {
+      "uuAppBoxRegistryBaseUri": "----- VALUE REQUIRED -----",
+      "uuCloudUniverseBaseUri": "----- VALUE REQUIRED -----",
+      "uuCloudLogStoreBaseUri": "----- VALUE REQUIRED -----"
+    }
+  },
+  "vendor": {
+    "productPortalUri": null,
+    "licenseAgreementUri": null,
+    "relatedProductUriList": [],
+    "organizationName": null,
+    "organizationOid": null,
+    "leadingAuthorList": [],
+    "otherAuthorList": [],
+    "usedTechnologies": {
+      "technologyList": [],
+      "otherTechnologyList": []
+    }
+  },
+  "uun_monitoringtempeture_maing01-server": {},
+  "uun_monitoringtempeture_maing01-hi": {}
+}

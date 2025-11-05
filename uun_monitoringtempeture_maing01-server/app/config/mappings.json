@@ -1,0 +1,51 @@
+{
+  "{vendor}-{uuApp}-{uuSubApp}": {
+    "useCaseMap": {
+      "sys/uuAppWorkspace/init": {
+        "realization": "api/controllers/MonitoringtempetureMainController.init",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "sys/uuAppWorkspace/load": {
+        "realization": "api/controllers/MonitoringtempetureMainController.load",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "sys/uuAppWorkspace/loadBasicData": {
+        "realization": "api/controllers/MonitoringtempetureMainController.loadBasicData",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "defaultUve": {
+        "realization": "index.html",
+        "httpMethod": "GET",
+        "type": "UVE"
+      },
+      "sys/uuAppWorkspace/initUve": {
+        "realization": "index.html",
+        "httpMethod": "GET",
+        "type": "UVE"
+      },
+      "sys/uuAppWorkspace/apiConsole": {
+        "realization": "api-console.html",
+        "httpMethod": "GET",
+        "type": "UVE"
+      },
+      "device/list": {
+        "realization": "api/controllers/DeviceController.list",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "device/create": {
+        "realization": "api/controllers/DeviceController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "device/delete": {
+        "realization": "api/controllers/DeviceController.delete",
+        "httpMethod": "POST",
+        "type": "CMD"
+      }
+    }
+  }
+}
