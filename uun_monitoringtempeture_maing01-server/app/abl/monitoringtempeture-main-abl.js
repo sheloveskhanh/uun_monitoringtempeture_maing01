@@ -144,39 +144,6 @@ class MonitoringtempetureMainAbl {
     // HDS 2
     return dtoOut;
   }
-  async getLatestTemperature(uri, session) {
-    const uriMongo = "mongodb+srv://khanh:pokemon123@coldchain.njceld3.mongodb.net/?appName=coldchain";
-    const dbName = "monitoringtempetureMainPrimary";
-    const collectionName = "sensor_data";
-    let uuAppErrorMap = {};
-
-    const client = new MongoClient(uriMongo);
-    try {
-      await client.connect();
-      const db = client.db(dbName);
-      const collection = db.collection(collectionName);
-
-      const latest = await collection.find({}).sort({ timestamp: -1 }).limit(1).toArray();
-
-      if (latest.length === 0) {
-        return { data: null, uuAppErrorMap };
-      }
-      const doc = latest[0];
-      return {
-        data: {
-          device: doc.device_eui,
-          temperature: doc.data.temperature ?? null,
-          timestamp: doc.timestamp,
-        },
-        uuAppErrorMap,
-      };
-    } catch (e) {
-      console.error("MongoDB query failed:", e);
-      throw e;
-    } finally {
-      await client.close();
-    }
-  }
 }
 
 module.exports = new MonitoringtempetureMainAbl();
