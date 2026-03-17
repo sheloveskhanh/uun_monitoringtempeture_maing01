@@ -30,3 +30,5 @@ gradle-app.setting
 gradlew
 gradlew.bat
 test_mongo.js
+.env
+development.json
