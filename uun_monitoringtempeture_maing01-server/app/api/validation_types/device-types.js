@@ -1,4 +1,5 @@
 /* eslint-disable */
+
 const deviceCreateDtoInType = shape({
   name: string(3, 255).isRequired(),
   description: string(3, 4000),

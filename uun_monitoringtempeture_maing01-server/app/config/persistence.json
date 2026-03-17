@@ -9,6 +9,9 @@
         },
         "device": {
           "realization": "dao/DeviceMongo"
+        },
+        "reading": {
+          "realization": "dao/ReadingMongo"
         }
       }
     }

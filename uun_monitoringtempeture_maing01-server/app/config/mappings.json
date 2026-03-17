@@ -45,6 +45,16 @@
         "realization": "api/controllers/DeviceController.delete",
         "httpMethod": "POST",
         "type": "CMD"
+      },
+      "reading/create": {
+        "realization": "api/controllers/ReadingController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "reading/list": {
+        "realization": "api/controllers/ReadingController.list",
+        "httpMethod": "GET",
+        "type": "CMD"
       }
     }
   }

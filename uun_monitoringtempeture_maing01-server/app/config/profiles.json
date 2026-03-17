@@ -49,6 +49,18 @@
       "device/delete": {
         "sysStateList": ["active"],
         "profileList": ["Authorities", "Operatives"]
+      },
+      "reading/getLatest": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives", "Auditors"]
+      },
+      "reading/create": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "reading/list": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives", "Auditors"]
       }
     }
   }
