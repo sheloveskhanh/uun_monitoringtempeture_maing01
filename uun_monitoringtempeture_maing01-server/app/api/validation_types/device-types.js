@@ -3,10 +3,11 @@
 const deviceCreateDtoInType = shape({
   name: string(3, 255).isRequired(),
   description: string(3, 4000),
-  uuThing: uuIdentity().isRequired(),
+  deviceEui: string(3, 64).isRequired(),
 });
 
 const deviceListDtoInType = shape({
+  state: string(),
   pageInfo: shape({
     pageIndex: integer(0, 1000000000),
     pageSize: integer(1, 1000000000),
@@ -15,4 +16,9 @@ const deviceListDtoInType = shape({
 
 const deviceDeleteDtoInType = shape({
   id: mongoId().isRequired(),
+});
+
+const deviceSetStateDtoInType = shape({
+  id: mongoId().isRequired(),
+  state: string().isRequired(),
 });
