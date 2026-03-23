@@ -1,5 +1,4 @@
 "use strict";
-const Path = require("path");
 const { Validator } = require("uu_appg01_server").Validation;
 const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
@@ -10,6 +9,7 @@ class ReadingAbl {
   constructor() {
     this.validator = Validator.load();
     this.dao = DaoFactory.getDao("reading");
+    this.deviceDao = DaoFactory.getDao("device");
   }
 
   async create(awid, dtoIn) {
@@ -21,12 +21,26 @@ class ReadingAbl {
       validationResult,
       uuAppErrorMap,
       Warnings.Create.UnsupportedKeys.code,
-      Errors.Create.InvalidDtoIn
+      Errors.Create.InvalidDtoIn,
     );
 
+    // Verify device exists
+    const device = await this.deviceDao.getByDeviceEui(awid, dtoIn.deviceEui);
+    if (!device) {
+      throw new Errors.Create.DeviceNotFound({ uuAppErrorMap }, { deviceEui: dtoIn.deviceEui });
+    }
+
+    // Verify device is active
+    if (device.state !== "active") {
+      throw new Errors.Create.DeviceIsNotActive(
+        { uuAppErrorMap },
+        { deviceEui: dtoIn.deviceEui, currentState: device.state },
+      );
+    }
+
     dtoIn.awid = awid;
-    if (!dtoIn.processed_at) {
-      dtoIn.processed_at = new Date().toISOString();
+    if (!dtoIn.processedAt) {
+      dtoIn.processedAt = new Date().toISOString();
     }
 
     const reading = await this.dao.create(dtoIn);
@@ -42,7 +56,7 @@ class ReadingAbl {
       validationResult,
       uuAppErrorMap,
       Warnings.List.UnsupportedKeys.code,
-      Errors.List.InvalidDtoIn
+      Errors.List.InvalidDtoIn,
     );
 
     if (!dtoIn.pageInfo) dtoIn.pageInfo = {};

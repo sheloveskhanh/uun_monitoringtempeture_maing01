@@ -1,9 +1,9 @@
 /* eslint-disable */
 
 const readingCreateDtoInType = shape({
-  device_eui: string().isRequired(),
+  deviceEui: string().isRequired(),
   timestamp: string(),
-  processed_at: string(),
+  processedAt: string(),
 });
 
 const readingListDtoInType = shape({
