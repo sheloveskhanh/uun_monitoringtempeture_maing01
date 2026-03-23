@@ -41,6 +41,11 @@
         "httpMethod": "POST",
         "type": "CMD"
       },
+      "device/setState": {
+        "realization": "api/controllers/DeviceController.setState",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
       "device/delete": {
         "realization": "api/controllers/DeviceController.delete",
         "httpMethod": "POST",

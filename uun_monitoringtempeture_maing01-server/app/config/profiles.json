@@ -12,7 +12,8 @@
       "Auditors",
       "Authenticated",
       "AwidInitiator",
-      "Autherities"
+      "Autherities",
+      "Gateways"
     ],
     "useCaseMap": {
       "sys/uuAppWorkspace/init": {
@@ -46,17 +47,17 @@
         "sysStateList": ["active"],
         "profileList": ["Authorities", "Operatives"]
       },
+      "device/setState": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
       "device/delete": {
         "sysStateList": ["active"],
         "profileList": ["Authorities", "Operatives"]
       },
-      "reading/getLatest": {
-        "sysStateList": ["active"],
-        "profileList": ["Authorities", "Operatives", "Auditors"]
-      },
       "reading/create": {
         "sysStateList": ["active"],
-        "profileList": ["Authorities", "Operatives"]
+        "profileList": ["Authorities", "Operatives", "Gateways"]
       },
       "reading/list": {
         "sysStateList": ["active"],
