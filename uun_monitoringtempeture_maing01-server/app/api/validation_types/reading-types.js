@@ -4,6 +4,13 @@ const readingCreateDtoInType = shape({
   deviceEui: string().isRequired(),
   timestamp: string(),
   processedAt: string(),
+  temperature: string(),
+  voltageRest: string(),
+  voltageLoad: string(),
+  w1Thermometers: array(),
+  orientation: string(),
+  currentLoad: string(),
+  bleTags: array(),
 });
 
 const readingListDtoInType = shape({

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "license": "License Commercial",
-  "spec": "nodejs-app; uu_appg01_devkit@6.6.2",
+  "spec": "nodejs-app; uu_appg01_devkit@6.8.2",
   "dependencies": {
     "mongodb": "^6.20.0",
     "uu_appg01_server": "^6.0.0",
@@ -12,9 +12,9 @@
   "devDependencies": {
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "uu_appg01_devkit": "^6.6.2",
+    "uu_appg01_devkit": "^6.8.2",
     "uu_appg01_server-test": "^6.0.0",
-    "uu_cloudg02-devkit": "^0.12.0"
+    "uu_cloudg02-devkit": "^0.12.2"
   },
   "engines": {
     "node": ">=16.0.0"
