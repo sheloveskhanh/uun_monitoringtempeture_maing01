@@ -57,7 +57,7 @@
       },
       "reading/create": {
         "sysStateList": ["active"],
-        "profileList": ["Authorities", "Operatives", "Gateways"]
+        "profileList": ["Gateways"]
       },
       "reading/list": {
         "sysStateList": ["active"],
