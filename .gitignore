@@ -33,3 +33,6 @@ test_mongo.js
 .env
 development.json
 production.json
+.DS_Store
+.claude/
+uun_monitoringtempeture_maing01-server/npmrc
