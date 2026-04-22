@@ -1,12 +1,11 @@
 "use strict";
 const { Validator } = require("uu_appg01_server").Validation;
-const { DaoFactory, ObjectStoreError } = require("uu_appg01_server").ObjectStore;
+const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
 const { Profile, AppClientTokenService, UuAppWorkspace, UuAppWorkspaceError } = require("uu_appg01_server").Workspace;
 const { UriBuilder } = require("uu_appg01_server").Uri;
 const { LoggerFactory } = require("uu_appg01_server").Logging;
 const { AppClient } = require("uu_appg01_server");
-const { MongoClient } = require("mongodb");
 const Errors = require("../api/errors/monitoringtempeture-main-error.js");
 
 const WARNINGS = {

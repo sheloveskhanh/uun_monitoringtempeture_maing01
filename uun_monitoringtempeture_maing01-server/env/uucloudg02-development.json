@@ -17,7 +17,7 @@
       "uuNodeSetMap": {
         "nodeSet01": {
           "uuNodeSetType": "cmdSync",
-          "uuNodeSize": "G2_S",
+          "uuNodeSize": "G2_XS",
           "uuAppPackRef": "uuAppPack01",
           "uuAppRoutingList": [
             {
@@ -47,13 +47,13 @@
     }
   },
   "uuAppPackRuntimeStackMap": {
-    "uuAppPack01": "docker://uuapp-dev-repo.plus4u.net/runtimestacks/uu_appruntimestackg02-nodejs:1.0"
+    "uuAppPack01": "docker://uuapp-dev-repo.plus4u.net/runtimestacks/uu_appruntimestackg02-nodejs:2"
   },
   "uuSubAppDeploymentConfig": {
-    "uuAppResourcePoolOid": "----- VALUE REQUIRED -----",
+    "uuAppResourcePoolOid": "665831446f6e96001632beca",
     "targetSlot": "production",
-    "asid": "----- VALUE REQUIRED -----",
-    "awidList": ["----- VALUE REQUIRED -----"]
+    "asid": "c57568a14256e79e09270e574067ef61",
+    "awidList": ["30432a1b3f9bf4b331d13618c90cec94"]
   },
   "uuAppServerEnvironment": {
     "uu_app_secretstore_enable_encryption": true,
