@@ -10,9 +10,10 @@ class ReadingAbl {
     this.validator = Validator.load();
     this.dao = DaoFactory.getDao("reading");
     this.deviceDao = DaoFactory.getDao("device");
+    this.gatewayDao = DaoFactory.getDao("gateway");
   }
 
-  async create(awid, dtoIn) {
+  async create(awid, dtoIn, uuIdentity) {
     let uuAppErrorMap = {};
 
     const validationResult = this.validator.validate("readingCreateDtoInType", dtoIn);
@@ -23,6 +24,18 @@ class ReadingAbl {
       Warnings.Create.UnsupportedKeys.code,
       Errors.Create.InvalidDtoIn,
     );
+
+    // Verify calling gateway exists and is active
+    const gateway = await this.gatewayDao.getByUuIdentity(awid, uuIdentity);
+    if (!gateway) {
+      throw new Errors.Create.GatewayNotFound({ uuAppErrorMap }, { uuIdentity });
+    }
+    if (gateway.state !== "active") {
+      throw new Errors.Create.GatewayIsNotActive(
+        { uuAppErrorMap },
+        { uuIdentity, currentState: gateway.state },
+      );
+    }
 
     // Verify device exists
     const device = await this.deviceDao.getByDeviceEui(awid, dtoIn.deviceEui);
@@ -40,7 +53,9 @@ class ReadingAbl {
 
     dtoIn.awid = awid;
     if (!dtoIn.processedAt) {
-      dtoIn.processedAt = new Date().toISOString();
+      dtoIn.processedAt = new Date();
+    } else {
+      dtoIn.processedAt = new Date(dtoIn.processedAt);
     }
 
     const reading = await this.dao.create(dtoIn);

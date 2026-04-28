@@ -3,7 +3,8 @@ const ReadingAbl = require("../../abl/reading-abl.js");
 
 class ReadingController {
   create(ucEnv) {
-    return ReadingAbl.create(ucEnv.getUri().getAwid(), ucEnv.getDtoIn());
+    const uuIdentity = ucEnv.getSession().getIdentity().getUuIdentity();
+    return ReadingAbl.create(ucEnv.getUri().getAwid(), ucEnv.getDtoIn(), uuIdentity);
   }
 
   list(ucEnv) {

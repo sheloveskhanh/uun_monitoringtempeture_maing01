@@ -29,6 +29,22 @@ const Create = {
       this.message = "Device is not in active state.";
     }
   },
+
+  GatewayNotFound: class extends MonitoringtempetureMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${Create.UC_CODE}gatewayNotFound`;
+      this.message = "Gateway with given uuIdentity does not exist.";
+    }
+  },
+
+  GatewayIsNotActive: class extends MonitoringtempetureMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${Create.UC_CODE}gatewayIsNotActive`;
+      this.message = "Gateway is not in active state.";
+    }
+  },
 };
 
 const List = {
