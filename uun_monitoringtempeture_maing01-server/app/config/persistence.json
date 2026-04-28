@@ -12,6 +12,9 @@
         },
         "reading": {
           "realization": "dao/ReadingMongo"
+        },
+        "gateway": {
+          "realization": "dao/GatewayMongo"
         }
       }
     }

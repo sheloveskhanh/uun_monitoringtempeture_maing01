@@ -55,6 +55,22 @@
         "sysStateList": ["active"],
         "profileList": ["Authorities", "Operatives"]
       },
+      "gateway/create": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "gateway/list": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives", "Auditors"]
+      },
+      "gateway/setState": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "gateway/delete": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
       "reading/create": {
         "sysStateList": ["active"],
         "profileList": ["Gateways"]

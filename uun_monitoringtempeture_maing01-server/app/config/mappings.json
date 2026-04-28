@@ -51,6 +51,26 @@
         "httpMethod": "POST",
         "type": "CMD"
       },
+      "gateway/create": {
+        "realization": "api/controllers/GatewayController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "gateway/list": {
+        "realization": "api/controllers/GatewayController.list",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "gateway/setState": {
+        "realization": "api/controllers/GatewayController.setState",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "gateway/delete": {
+        "realization": "api/controllers/GatewayController.delete",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
       "reading/create": {
         "realization": "api/controllers/ReadingController.create",
         "httpMethod": "POST",
