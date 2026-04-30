@@ -59,7 +59,7 @@
     "uu_app_secretstore_enable_encryption": true,
     "uu_app_secretstore_master_key_active_slot": "slot1",
     "uu_app_secretstore_master_key1_slot1": "HDapim+_w*c~r$N)})pSk@A$x7<PucNHe^:y_fli!)O@exm1S+<7VRjOtLJCoW<R",
-    "asid_license_owner_list": ["926-1205-4009-0000"],
+    "asid_license_owner_list": ["9432-3256-9015-0000"],
     "uu_app_oidc_providers_oidcg02_uri": "https://uuapp-dev.plus4u.net/uu-oidc-maing02/eca71064ecce44b0a25ce940eb8f053d/oidc",
     "uu5g05_libraryRegistryBaseUri": "https://uuapp-dev.plus4u.net/uu-applibraryregistry-maing01/000008ad5570455e83857a394f9a21c9",
     "uu5g05_plus4UGoBaseUri": "https://uuapp-dev.plus4u.net/uu-plus4ugo-maing01/00000c3f57074bfcb759aba2d562e013",
