@@ -1,6 +1,6 @@
 {
   "product": "uun_monitoringtempeture_maing01",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "license": "License Commercial",
   "description": {
     "en": "",
@@ -8,9 +8,9 @@
   },
   "devkit": {
     "development": {
-      "uuAppBoxRegistryBaseUri": "----- VALUE REQUIRED -----",
-      "uuCloudUniverseBaseUri": "----- VALUE REQUIRED -----",
-      "uuCloudLogStoreBaseUri": "----- VALUE REQUIRED -----"
+      "uuAppBoxRegistryBaseUri": "https://uuapp.plus4u.net/uu-cloud-appboxregistryg01/f974cf2f5c6d4b6896fabf7a216de792/",
+      "uuCloudUniverseBaseUri": "https://uuapp.plus4u.net/uu-cloud-universeg01/499b255d2620f209353489fad4ccceb4/",
+      "uuCloudLogStoreBaseUri": "https://uuapp.plus4u.net/uu-cloudlogstore-maing02/d26df2f7be794406b27687ef410fd73b/"
     }
   },
   "vendor": {
@@ -26,6 +26,13 @@
       "otherTechnologyList": []
     }
   },
-  "uun_monitoringtempeture_maing01-server": {},
+  "uun_monitoringtempeture_maing01-server": {
+    "devkit": {
+      "development": {
+        "uuAppBoxUri": "https://uuapp.plus4u.net/uu-cloud-appboxregistryg01/f974cf2f5c6d4b6896fabf7a216de792/uuAppBox/get?id=69f308f0a6a08cc12b5933d8&extended=true",
+        "uuSubAppInstanceWorkloadOid": "69e5bf50ce248d18fd3d8bff"
+      }
+    }
+  },
   "uun_monitoringtempeture_maing01-hi": {}
 }
