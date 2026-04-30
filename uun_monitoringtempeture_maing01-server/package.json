@@ -1,6 +1,6 @@
 {
   "name": "uun_monitoringtempeture_maing01-server",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
   "license": "License Commercial",
   "spec": "nodejs-app; uu_appg01_devkit@6.8.2",
