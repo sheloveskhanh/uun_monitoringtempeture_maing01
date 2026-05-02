@@ -1,6 +1,6 @@
 {
   "name": "uun_monitoringtempeture_maing01-server",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "description": "",
   "license": "License Commercial",
   "spec": "nodejs-app; uu_appg01_devkit@6.8.2",
@@ -51,7 +51,8 @@
     "uuCloudg02LogExport": "uu_cloudg02-devkit logExport",
     "uuCloudg02Swap": "uu_cloudg02-devkit swap",
     "uuCloudg02Undeploy": "uu_cloudg02-devkit undeploy",
-    "uuCloudg02VulnerabilityScan": "uu_cloudg02-devkit vulnerabilityScan"
+    "uuCloudg02VulnerabilityScan": "uu_cloudg02-devkit vulnerabilityScan",
+    "uuCloudg02VerifySignature": "uu_cloudg02-devkit verifySignature"
   },
   "main": "app.js",
   "files": [
