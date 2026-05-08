@@ -80,6 +80,26 @@
         "realization": "api/controllers/ReadingController.list",
         "httpMethod": "GET",
         "type": "CMD"
+      },
+      "rule/create": {
+        "realization": "api/controllers/RuleController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "rule/list": {
+        "realization": "api/controllers/RuleController.list",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "rule/update": {
+        "realization": "api/controllers/RuleController.update",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "rule/delete": {
+        "realization": "api/controllers/RuleController.delete",
+        "httpMethod": "POST",
+        "type": "CMD"
       }
     }
   }

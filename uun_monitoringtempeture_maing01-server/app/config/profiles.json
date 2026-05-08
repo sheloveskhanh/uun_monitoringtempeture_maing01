@@ -78,6 +78,22 @@
       "reading/list": {
         "sysStateList": ["active"],
         "profileList": ["Authorities", "Operatives", "Auditors"]
+      },
+      "rule/create": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "rule/list": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives", "Auditors"]
+      },
+      "rule/update": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "rule/delete": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
       }
     }
   }

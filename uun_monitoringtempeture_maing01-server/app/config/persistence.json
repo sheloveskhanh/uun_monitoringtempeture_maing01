@@ -15,6 +15,9 @@
         },
         "gateway": {
           "realization": "dao/GatewayMongo"
+        },
+        "rule": {
+          "realization": "dao/RuleMongo"
         }
       }
     }
