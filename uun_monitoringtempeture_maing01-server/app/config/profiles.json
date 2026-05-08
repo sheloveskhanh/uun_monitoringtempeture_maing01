@@ -94,6 +94,22 @@
       "rule/delete": {
         "sysStateList": ["active"],
         "profileList": ["Authorities", "Operatives"]
+      },
+      "alert/create": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "alert/list": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives", "Auditors"]
+      },
+      "alert/acknowledge": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
+      },
+      "alert/delete": {
+        "sysStateList": ["active"],
+        "profileList": ["Authorities", "Operatives"]
       }
     }
   }

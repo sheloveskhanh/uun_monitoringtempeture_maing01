@@ -18,6 +18,9 @@
         },
         "rule": {
           "realization": "dao/RuleMongo"
+        },
+        "alert": {
+          "realization": "dao/AlertMongo"
         }
       }
     }

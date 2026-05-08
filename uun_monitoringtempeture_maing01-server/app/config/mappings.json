@@ -100,6 +100,26 @@
         "realization": "api/controllers/RuleController.delete",
         "httpMethod": "POST",
         "type": "CMD"
+      },
+      "alert/create": {
+        "realization": "api/controllers/AlertController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "alert/list": {
+        "realization": "api/controllers/AlertController.list",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "alert/acknowledge": {
+        "realization": "api/controllers/AlertController.acknowledge",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "alert/delete": {
+        "realization": "api/controllers/AlertController.delete",
+        "httpMethod": "POST",
+        "type": "CMD"
       }
     }
   }
