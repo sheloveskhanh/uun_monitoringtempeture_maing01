@@ -11,6 +11,8 @@ class ReadingAbl {
     this.dao = DaoFactory.getDao("reading");
     this.deviceDao = DaoFactory.getDao("device");
     this.gatewayDao = DaoFactory.getDao("gateway");
+    this.ruleDao = DaoFactory.getDao("rule");
+    this.alertDao = DaoFactory.getDao("alert");
   }
 
   async create(awid, dtoIn, uuIdentity) {
@@ -59,6 +61,39 @@ class ReadingAbl {
     }
 
     const reading = await this.dao.create(dtoIn);
+
+    // Auto-trigger alerts if a rule exists for this device
+    const rule = await this.ruleDao.getByDeviceEui(awid, dtoIn.deviceEui);
+    if (rule) {
+      const temp = parseFloat(dtoIn.temperature);
+      const voltage = parseFloat(dtoIn.voltageRest);
+      const alerts = [];
+
+      if (!isNaN(temp)) {
+        if (rule.minC !== undefined && temp < parseFloat(rule.minC)) {
+          alerts.push({ type: "tempTooLow", message: `Temperature ${temp}°C is below minimum ${rule.minC}°C`, severity: "critical" });
+        } else if (rule.maxC !== undefined && temp > parseFloat(rule.maxC)) {
+          alerts.push({ type: "tempTooHigh", message: `Temperature ${temp}°C is above maximum ${rule.maxC}°C`, severity: "critical" });
+        }
+      }
+
+      if (!isNaN(voltage) && rule.batteryLowV !== undefined && voltage < parseFloat(rule.batteryLowV)) {
+        alerts.push({ type: "batteryLow", message: `Battery voltage ${voltage}V is below threshold ${rule.batteryLowV}V`, severity: "warning" });
+      }
+
+      for (const alertData of alerts) {
+        await this.alertDao.create({
+          awid,
+          deviceEui: dtoIn.deviceEui,
+          type: alertData.type,
+          message: alertData.message,
+          severity: alertData.severity,
+          status: "open",
+          createdAt: new Date(),
+        });
+      }
+    }
+
     return { ...reading, uuAppErrorMap };
   }
 
