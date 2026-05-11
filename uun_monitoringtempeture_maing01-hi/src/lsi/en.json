@@ -21,6 +21,7 @@
     "initialize": "Initialize"
   },
   "Menu": {
+    "dashboard": "Dashboard",
     "home": "Welcome",
     "about": "About Application"
   }

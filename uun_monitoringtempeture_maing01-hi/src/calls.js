@@ -38,6 +38,26 @@ const Calls = {
     return await Calls.getWorkspace();
   },
 
+  listReadings(dtoIn) {
+    const commandUri = Calls.getCommandUri("reading/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  listAlerts(dtoIn) {
+    const commandUri = Calls.getCommandUri("alert/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  listDevices(dtoIn) {
+    const commandUri = Calls.getCommandUri("device/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  acknowledgeAlert(dtoIn) {
+    const commandUri = Calls.getCommandUri("alert/acknowledge");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   getCommandUri(useCase, baseUri = Environment.appBaseUri) {
     return (!baseUri.endsWith("/") ? baseUri + "/" : baseUri) + (useCase.startsWith("/") ? useCase.slice(1) : useCase);
   },
