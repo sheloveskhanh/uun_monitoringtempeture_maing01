@@ -18,6 +18,11 @@ class AlertMongo extends UuObjectDao {
     if (filter.deviceEui) mongoFilter.deviceEui = filter.deviceEui;
     if (filter.status) mongoFilter.status = filter.status;
     if (filter.severity) mongoFilter.severity = filter.severity;
+    if (filter.from || filter.to) {
+      mongoFilter.createdAt = {};
+      if (filter.from) mongoFilter.createdAt.$gte = new Date(filter.from);
+      if (filter.to) mongoFilter.createdAt.$lte = new Date(filter.to);
+    }
     return await super.find(mongoFilter, pageInfo, { createdAt: -1 });
   }
 

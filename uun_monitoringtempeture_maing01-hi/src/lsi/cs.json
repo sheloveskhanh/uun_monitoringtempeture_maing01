@@ -21,6 +21,10 @@
     "initialize": "Inicializovat"
   },
   "Menu": {
+    "dashboard": "Dashboard",
+    "readings": "Readings",
+    "rules": "Rules",
+    "alerts": "Alerts",
     "home": "Vítejte",
     "about": "O aplikaci"
   }

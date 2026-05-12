@@ -38,6 +38,51 @@ const Calls = {
     return await Calls.getWorkspace();
   },
 
+  listReadings(dtoIn) {
+    const commandUri = Calls.getCommandUri("reading/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  listAlerts(dtoIn) {
+    const commandUri = Calls.getCommandUri("alert/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  listDevices(dtoIn) {
+    const commandUri = Calls.getCommandUri("device/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  listRules(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  createRule(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/create");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  updateRule(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/update");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  deleteRule(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/delete");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  acknowledgeAlert(dtoIn) {
+    const commandUri = Calls.getCommandUri("alert/acknowledge");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  deleteAlert(dtoIn) {
+    const commandUri = Calls.getCommandUri("alert/delete");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   getCommandUri(useCase, baseUri = Environment.appBaseUri) {
     return (!baseUri.endsWith("/") ? baseUri + "/" : baseUri) + (useCase.startsWith("/") ? useCase.slice(1) : useCase);
   },

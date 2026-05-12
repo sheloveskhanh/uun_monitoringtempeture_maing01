@@ -21,6 +21,10 @@
     "initialize": "Initialize"
   },
   "Menu": {
+    "dashboard": "Dashboard",
+    "readings": "Readings",
+    "rules": "Rules",
+    "alerts": "Alerts",
     "home": "Welcome",
     "about": "About Application"
   }

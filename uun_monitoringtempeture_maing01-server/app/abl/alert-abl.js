@@ -56,7 +56,7 @@ class AlertAbl {
 
     const dtoOut = await this.dao.list(
       awid,
-      { deviceEui: dtoIn.deviceEui, status: dtoIn.status, severity: dtoIn.severity },
+      { deviceEui: dtoIn.deviceEui, status: dtoIn.status, severity: dtoIn.severity, from: dtoIn.from, to: dtoIn.to },
       dtoIn.pageInfo,
     );
     dtoOut.uuAppErrorMap = uuAppErrorMap;
