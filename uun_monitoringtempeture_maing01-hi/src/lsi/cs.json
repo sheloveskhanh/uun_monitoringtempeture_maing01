@@ -21,6 +21,8 @@
     "initialize": "Inicializovat"
   },
   "Menu": {
+    "dashboard": "Dashboard",
+    "readings": "Měření",
     "home": "Vítejte",
     "about": "O aplikaci"
   }
