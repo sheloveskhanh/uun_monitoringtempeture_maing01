@@ -53,6 +53,26 @@ const Calls = {
     return Calls.call("cmdGet", commandUri, dtoIn);
   },
 
+  listRules(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  createRule(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/create");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  updateRule(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/update");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  deleteRule(dtoIn) {
+    const commandUri = Calls.getCommandUri("rule/delete");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   acknowledgeAlert(dtoIn) {
     const commandUri = Calls.getCommandUri("alert/acknowledge");
     return Calls.call("cmdPost", commandUri, dtoIn);

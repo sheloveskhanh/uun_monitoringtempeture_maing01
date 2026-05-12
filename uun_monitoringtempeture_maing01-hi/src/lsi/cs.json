@@ -22,7 +22,8 @@
   },
   "Menu": {
     "dashboard": "Dashboard",
-    "readings": "Měření",
+    "readings": "Readings",
+    "rules": "Rules",
     "home": "Vítejte",
     "about": "O aplikaci"
   }

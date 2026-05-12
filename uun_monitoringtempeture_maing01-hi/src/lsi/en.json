@@ -23,6 +23,7 @@
   "Menu": {
     "dashboard": "Dashboard",
     "readings": "Readings",
+    "rules": "Rules",
     "home": "Welcome",
     "about": "About Application"
   }

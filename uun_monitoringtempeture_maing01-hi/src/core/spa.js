@@ -11,6 +11,7 @@ const InitAppWorkspace = Utils.Component.lazy(() => import("../routes/init-app-w
 const ControlPanel = Utils.Component.lazy(() => import("../routes/control-panel.js"));
 const Dashboard = Utils.Component.lazy(() => import("../routes/dashboard.js"));
 const Readings = Utils.Component.lazy(() => import("../routes/readings.js"));
+const Rules = Utils.Component.lazy(() => import("../routes/rules.js"));
 //@@viewOff:imports
 
 //@@viewOn:constants
@@ -19,6 +20,7 @@ const ROUTE_MAP = {
   home: (props) => <Home {...props} />,
   dashboard: (props) => <Dashboard {...props} />,
   readings: (props) => <Readings {...props} />,
+  rules: (props) => <Rules {...props} />,
   "sys/uuAppWorkspace/initUve": (props) => <InitAppWorkspace {...props} />,
   controlPanel: (props) => <ControlPanel {...props} />,
   "*": () => (
