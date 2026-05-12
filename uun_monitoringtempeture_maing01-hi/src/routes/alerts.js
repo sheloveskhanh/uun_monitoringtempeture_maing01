@@ -161,6 +161,8 @@ let Alerts = createVisualComponent({
     const [status, setStatus] = useState("open");
     const [severity, setSeverity] = useState("");
     const [deviceEui, setDeviceEui] = useState("");
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
     const [pendingId, setPendingId] = useState(null);
     const [toast, setToast] = useState(null);
 
@@ -180,6 +182,8 @@ let Alerts = createVisualComponent({
       if (status) dtoIn.status = status;
       if (severity) dtoIn.severity = severity;
       if (deviceEui.trim()) dtoIn.deviceEui = deviceEui.trim();
+      if (from) dtoIn.from = new Date(from).toISOString();
+      if (to) dtoIn.to = new Date(to + "T23:59:59").toISOString();
       return dtoIn;
     }
 
@@ -191,6 +195,8 @@ let Alerts = createVisualComponent({
       setStatus("open");
       setSeverity("");
       setDeviceEui("");
+      setFrom("");
+      setTo("");
       alertDataList.handlerMap.load({ status: "open" });
     }
 
@@ -259,6 +265,24 @@ let Alerts = createVisualComponent({
                 placeholder="e.g. 24c4c981ad293382"
                 value={deviceEui}
                 onChange={(e) => setDeviceEui(e.target.value)}
+              />
+            </div>
+            <div className={Css.filterGroup()}>
+              <span className={Css.filterLabel()}>From</span>
+              <input
+                className={Css.filterInput()}
+                type="date"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+              />
+            </div>
+            <div className={Css.filterGroup()}>
+              <span className={Css.filterLabel()}>To</span>
+              <input
+                className={Css.filterInput()}
+                type="date"
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
               />
             </div>
             <Uu5Elements.Button onClick={handleApply} significance="highlighted" colorScheme="primary">

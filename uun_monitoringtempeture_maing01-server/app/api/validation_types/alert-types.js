@@ -11,6 +11,8 @@ const alertListDtoInType = shape({
   deviceEui: string(),
   status: string(),
   severity: string(),
+  from: string(),
+  to: string(),
   pageInfo: shape({
     pageIndex: integer(0, 1000000000),
     pageSize: integer(1, 1000),
