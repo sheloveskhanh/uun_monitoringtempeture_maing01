@@ -166,7 +166,9 @@ let Devices = createVisualComponent({
     async function handleCreate() {
       setPendingId("new");
       try {
-        await Calls.createDevice(createValues);
+        const dtoIn = { name: createValues.name, deviceEui: createValues.deviceEui };
+        if (createValues.description.trim()) dtoIn.description = createValues.description.trim();
+        await Calls.createDevice(dtoIn);
         await deviceDataList.handlerMap.load({});
         setShowCreate(false);
         setCreateValues(EMPTY_FORM);
