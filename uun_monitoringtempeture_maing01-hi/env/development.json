@@ -3,8 +3,8 @@
   "autoOpenInBrowser": false,
   "basePath": "/uun-monitoringtempeture-maing01/0/",
   "useMockData": false,
-  "callsBaseUri": "https://uuapp-dev.plus4u.net/uun-monitoringtempeture-maing01/30432a1b3f9bf4b331d13618c90cec94",
   "uu5Environment": {
+    "callsBaseUri": "https://uuapp-dev.plus4u.net/uun-monitoringtempeture-maing01/30432a1b3f9bf4b331d13618c90cec94",
     "uu5g05_trustedUriRegExp": "^https?://localhost(:[0-9]+)?/|^https://([a-z][a-z0-9\\-]{0,61}[a-z0-9][.]|[a-z][.])?plus4u[.]net(:[0-9]+)?(?=[/#?]|$)",
     "uu_app_oidc_providers_oidcg02_uri": "https://uuapp-dev.plus4u.net/uu-oidc-maing02/eca71064ecce44b0a25ce940eb8f053d/oidc",
     "uu5g05_libraryRegistryBaseUri": "https://uuapp-dev.plus4u.net/uu-applibraryregistry-maing01/000008ad5570455e83857a394f9a21c9",
