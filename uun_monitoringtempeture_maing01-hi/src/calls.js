@@ -78,6 +78,11 @@ const Calls = {
     return Calls.call("cmdPost", commandUri, dtoIn);
   },
 
+  deleteAlert(dtoIn) {
+    const commandUri = Calls.getCommandUri("alert/delete");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   getCommandUri(useCase, baseUri = Environment.appBaseUri) {
     return (!baseUri.endsWith("/") ? baseUri + "/" : baseUri) + (useCase.startsWith("/") ? useCase.slice(1) : useCase);
   },
