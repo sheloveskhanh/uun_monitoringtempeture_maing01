@@ -1,5 +1,5 @@
 //@@viewOn:imports
-import { createVisualComponent, Utils, useDataList } from "uu5g05";
+import { createVisualComponent, Utils, useDataList, useState, useEffect } from "uu5g05";
 import Uu5Elements from "uu5g05-elements";
 import { withRoute } from "uu_plus4u5g02-app";
 import Config from "./config/config.js";
@@ -9,7 +9,7 @@ import Calls from "../calls.js";
 
 //@@viewOn:constants
 const SEVERITY_COLOR = { critical: "#d32f2f", warning: "#f57c00" };
-const ALERT_TYPE_LABEL = { tempHigh: "Temp High", tempLow: "Temp Low", batteryLow: "Battery Low" };
+const ALERT_TYPE_LABEL = { tempTooHigh: "Temp Too High", tempTooLow: "Temp Too Low", batteryLow: "Battery Low" };
 //@@viewOff:constants
 
 //@@viewOn:css
@@ -135,6 +135,19 @@ const Css = {
       fontSize: 14,
       padding: "12px 0",
     }),
+  toast: () =>
+    Config.Css.css({
+      position: "fixed",
+      top: 20,
+      right: 24,
+      background: "#323232",
+      color: "#fff",
+      padding: "12px 20px",
+      borderRadius: 8,
+      fontSize: 14,
+      zIndex: 9999,
+      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    }),
 };
 //@@viewOff:css
 
@@ -172,6 +185,15 @@ let Dashboard = createVisualComponent({
 
   render(props) {
     //@@viewOn:private
+    const [pendingId, setPendingId] = useState(null);
+    const [toast, setToast] = useState(null);
+
+    useEffect(() => {
+      if (!toast) return;
+      const t = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(t);
+    }, [toast]);
+
     const readingDataList = useDataList({
       handlerMap: { load: Calls.listReadings },
       initialDtoIn: {},
@@ -179,20 +201,31 @@ let Dashboard = createVisualComponent({
 
     const alertDataList = useDataList({
       handlerMap: { load: Calls.listAlerts },
-      itemHandlerMap: {
-        acknowledge: (item) => Calls.acknowledgeAlert({ id: item.data._id }),
-      },
-      initialDtoIn: { status: "active" },
+      initialDtoIn: { status: "open" },
     });
 
     const isLoading = readingDataList.state === "pendingNoData" || alertDataList.state === "pendingNoData";
 
-    const readings = readingDataList.data?.map((d) => d.data) ?? [];
-    const sortedReadings = [...readings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const readings = (readingDataList.data ?? []).filter(Boolean).map((d) => d.data).filter(Boolean);
+    const sortedReadings = [...readings].sort((a, b) => new Date(b.processedAt) - new Date(a.processedAt));
     const latestReading = sortedReadings[0];
     const recentReadings = sortedReadings.slice(0, 5);
 
-    const activeAlerts = (alertDataList.data ?? []).filter((item) => item.data?.status !== "acknowledged");
+    const activeAlerts = (alertDataList.data ?? []).filter(Boolean).map((d) => d.data).filter(Boolean);
+
+    async function handleAcknowledge(id) {
+      setPendingId(id);
+      try {
+        await Calls.acknowledgeAlert({ id });
+        await alertDataList.handlerMap.load({ status: "open" });
+        setToast("Alert acknowledged.");
+      } catch (e) {
+        console.error("Acknowledge failed:", e);
+        setToast("Failed to acknowledge alert.");
+      } finally {
+        setPendingId(null);
+      }
+    }
     //@@viewOff:private
 
     //@@viewOn:render
@@ -204,19 +237,20 @@ let Dashboard = createVisualComponent({
 
     return (
       <div {...attrs}>
+        {toast && <div className={Css.toast()}>{toast}</div>}
         <RouteBar />
         <div className={Css.root()}>
           <div className={Css.statRow()}>
             <StatCard
               icon="mdi-thermometer"
               label="Last Temperature"
-              value={latestReading ? `${latestReading.value} °C` : "—"}
+              value={latestReading ? `${latestReading.temperature} °C` : "—"}
               iconColor="#e53935"
             />
             <StatCard
               icon="mdi-battery"
               label="Battery Voltage"
-              value={latestReading ? `${latestReading.batteryV} V` : "—"}
+              value={latestReading ? `${latestReading.voltageRest} V` : "—"}
               iconColor="#43a047"
             />
             <StatCard
@@ -241,10 +275,10 @@ let Dashboard = createVisualComponent({
               </thead>
               <tbody>
                 {recentReadings.map((r) => (
-                  <tr key={r._id}>
-                    <td className={Css.td()}>{formatDate(r.createdAt)}</td>
-                    <td className={Css.td()}>{r.value}</td>
-                    <td className={Css.td()}>{r.batteryV}</td>
+                  <tr key={r.id}>
+                    <td className={Css.td()}>{formatDate(r.processedAt)}</td>
+                    <td className={Css.td()}>{r.temperature}</td>
+                    <td className={Css.td()}>{r.voltageRest}</td>
                   </tr>
                 ))}
               </tbody>
@@ -255,22 +289,22 @@ let Dashboard = createVisualComponent({
           {activeAlerts.length === 0 ? (
             <div className={Css.emptyNote()}>No active alerts.</div>
           ) : (
-            activeAlerts.map((item) => (
-              <div key={item.data._id} className={Css.alertRow()}>
-                <span className={Css.severityBadge(SEVERITY_COLOR[item.data.severity])}>
-                  {item.data.severity}
+            activeAlerts.map((alert) => (
+              <div key={alert.id} className={Css.alertRow()}>
+                <span className={Css.severityBadge(SEVERITY_COLOR[alert.severity])}>
+                  {alert.severity}
                 </span>
                 <div className={Css.alertInfo()}>
                   <div className={Css.alertMessage()}>
-                    {ALERT_TYPE_LABEL[item.data.type] || item.data.type} — {item.data.message}
+                    {ALERT_TYPE_LABEL[alert.type] || alert.type} — {alert.message}
                   </div>
                   <div className={Css.alertMeta()}>
-                    Device: {item.data.deviceEui} · {formatDate(item.data.createdAt)}
+                    Device: {alert.deviceEui} · {formatDate(alert.createdAt)}
                   </div>
                 </div>
                 <Uu5Elements.Button
-                  onClick={() => item.handlerMap.acknowledge()}
-                  disabled={item.state === "pending"}
+                  onClick={() => handleAcknowledge(alert.id)}
+                  disabled={pendingId === alert.id}
                   size="s"
                   significance="subdued"
                 >
