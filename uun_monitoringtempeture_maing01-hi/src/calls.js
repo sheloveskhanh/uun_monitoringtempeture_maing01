@@ -53,6 +53,21 @@ const Calls = {
     return Calls.call("cmdGet", commandUri, dtoIn);
   },
 
+  createDevice(dtoIn) {
+    const commandUri = Calls.getCommandUri("device/create");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  setDeviceState(dtoIn) {
+    const commandUri = Calls.getCommandUri("device/setState");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  deleteDevice(dtoIn) {
+    const commandUri = Calls.getCommandUri("device/delete");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   listRules(dtoIn) {
     const commandUri = Calls.getCommandUri("rule/list");
     return Calls.call("cmdGet", commandUri, dtoIn);
