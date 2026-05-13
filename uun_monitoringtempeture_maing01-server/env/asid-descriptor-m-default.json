@@ -3,7 +3,7 @@
   "schemaSpecificationUri": "https://uuapp.plus4u.net/uu-bookkit-maing01/bef682626ed943f28cde360ccb325981/book/page?code=uuSubAppInstanceDescriptor",
   "uuSubApp": {
     "code": "UUN.MONITORINGTEMPETURE.MAING01",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "name": "uunMonitoringtempetureMaing01",
     "description": "",
     "license": "License Commercial",
