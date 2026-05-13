@@ -82,6 +82,29 @@ class DeviceAbl {
     return { ...updated, uuAppErrorMap };
   }
 
+  async update(awid, dtoIn) {
+    let uuAppErrorMap = {};
+    const validationResult = this.validator.validate("deviceUpdateDtoInType", dtoIn);
+    uuAppErrorMap = ValidationHelper.processValidationResult(
+      dtoIn,
+      validationResult,
+      uuAppErrorMap,
+      Warnings.Update.UnsupportedKeys.code,
+      Errors.Update.InvalidDtoIn,
+    );
+
+    const device = await this.dao.get(awid, dtoIn.id);
+    if (!device) {
+      throw new Errors.Update.DeviceDoesNotExist({ uuAppErrorMap }, { deviceId: dtoIn.id });
+    }
+
+    if (dtoIn.name !== undefined) device.name = dtoIn.name;
+    if (dtoIn.description !== undefined) device.description = dtoIn.description;
+
+    const updated = await this.dao.update(device);
+    return { ...updated, uuAppErrorMap };
+  }
+
   async delete(awid, dtoIn) {
     let uuAppErrorMap = {};
     const validationResult = this.validator.validate("deviceDeleteDtoInType", dtoIn);

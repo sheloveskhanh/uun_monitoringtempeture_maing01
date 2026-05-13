@@ -6,6 +6,7 @@ const Warnings = {
   List: { UnsupportedKeys: { code: `${Errors.List.UC_CODE}unsupportedKeys` } },
   SetState: { UnsupportedKeys: { code: `${Errors.SetState.UC_CODE}unsupportedKeys` } },
   Delete: { UnsupportedKeys: { code: `${Errors.Delete.UC_CODE}unsupportedKeys` } },
+  Update: { UnsupportedKeys: { code: `${Errors.Update.UC_CODE}unsupportedKeys` } },
 };
 
 module.exports = Warnings;

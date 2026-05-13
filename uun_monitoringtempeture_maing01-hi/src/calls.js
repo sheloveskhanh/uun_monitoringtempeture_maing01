@@ -53,6 +53,11 @@ const Calls = {
     return Calls.call("cmdGet", commandUri, dtoIn);
   },
 
+  updateDevice(dtoIn) {
+    const commandUri = Calls.getCommandUri("device/update");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   createDevice(dtoIn) {
     const commandUri = Calls.getCommandUri("device/create");
     return Calls.call("cmdPost", commandUri, dtoIn);

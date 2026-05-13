@@ -14,6 +14,10 @@ class DeviceController {
     return DeviceAbl.setState(ucEnv.getUri().getAwid(), ucEnv.getDtoIn());
   }
 
+  update(ucEnv) {
+    return DeviceAbl.update(ucEnv.getUri().getAwid(), ucEnv.getDtoIn());
+  }
+
   delete(ucEnv) {
     return DeviceAbl.delete(ucEnv.getUri().getAwid(), ucEnv.getDtoIn());
   }
