@@ -73,6 +73,11 @@ const Calls = {
     return Calls.call("cmdPost", commandUri, dtoIn);
   },
 
+  listGateways(dtoIn) {
+    const commandUri = Calls.getCommandUri("gateway/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
   listRules(dtoIn) {
     const commandUri = Calls.getCommandUri("rule/list");
     return Calls.call("cmdGet", commandUri, dtoIn);

@@ -6,6 +6,7 @@ import Plus4U5App from "uu_plus4u5g02-app";
 
 import Config from "./config/config.js";
 import Home from "../routes/home.js";
+import AppLayout from "./app-layout.js";
 
 const InitAppWorkspace = Utils.Component.lazy(() => import("../routes/init-app-workspace.js"));
 const ControlPanel = Utils.Component.lazy(() => import("../routes/control-panel.js"));
@@ -17,14 +18,17 @@ const Devices = Utils.Component.lazy(() => import("../routes/devices.js"));
 //@@viewOff:imports
 
 //@@viewOn:constants
+const withLayout = (Component) => (props) =>
+  <AppLayout><Component {...props} /></AppLayout>;
+
 const ROUTE_MAP = {
   "": { redirect: "dashboard" },
   home: (props) => <Home {...props} />,
-  dashboard: (props) => <Dashboard {...props} />,
-  readings: (props) => <Readings {...props} />,
-  rules: (props) => <Rules {...props} />,
-  alerts: (props) => <Alerts {...props} />,
-  devices: (props) => <Devices {...props} />,
+  dashboard: withLayout(Dashboard),
+  readings: withLayout(Readings),
+  rules: withLayout(Rules),
+  alerts: withLayout(Alerts),
+  devices: withLayout(Devices),
   "sys/uuAppWorkspace/initUve": (props) => <InitAppWorkspace {...props} />,
   controlPanel: (props) => <ControlPanel {...props} />,
   "*": () => (

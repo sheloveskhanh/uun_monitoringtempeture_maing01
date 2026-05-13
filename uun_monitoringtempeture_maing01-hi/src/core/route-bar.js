@@ -64,7 +64,7 @@ const RouteBar = createVisualComponent({
     //@@viewOff:private
 
     //@@viewOn:render
-    return <Plus4U5App.PositionBar actionList={actionList} {...props} />;
+    return null;
     //@@viewOff:render
   },
 });
