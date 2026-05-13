@@ -75,4 +75,22 @@ const Delete = {
   },
 };
 
-module.exports = { Create, List, SetState, Delete };
+const Update = {
+  UC_CODE: `${DEVICE_ERROR_PREFIX}update/`,
+  InvalidDtoIn: class extends MonitoringtempetureMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${Update.UC_CODE}invalidDtoIn`;
+      this.message = "DtoIn is not valid.";
+    }
+  },
+  DeviceDoesNotExist: class extends MonitoringtempetureMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${Update.UC_CODE}deviceDoesNotExist`;
+      this.message = "Device does not exist.";
+    }
+  },
+};
+
+module.exports = { Create, List, SetState, Delete, Update };

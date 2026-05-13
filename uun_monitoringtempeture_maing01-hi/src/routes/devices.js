@@ -152,6 +152,8 @@ let Devices = createVisualComponent({
 
     const [showCreate, setShowCreate] = useState(false);
     const [createValues, setCreateValues] = useState(EMPTY_FORM);
+    const [editingId, setEditingId] = useState(null);
+    const [editValues, setEditValues] = useState({});
     const [pendingId, setPendingId] = useState(null);
     const [toast, setToast] = useState(null);
 
@@ -176,6 +178,33 @@ let Devices = createVisualComponent({
       } catch (e) {
         console.error("Create failed:", e);
         setToast("Failed to create device.");
+      } finally {
+        setPendingId(null);
+      }
+    }
+
+    function startEdit(device) {
+      setEditingId(device.id);
+      setEditValues({ name: device.name, description: device.description || "" });
+    }
+
+    function cancelEdit() {
+      setEditingId(null);
+      setEditValues({});
+    }
+
+    async function handleUpdate(id) {
+      setPendingId(id);
+      try {
+        const dtoIn = { id, name: editValues.name };
+        if (editValues.description.trim()) dtoIn.description = editValues.description.trim();
+        await Calls.updateDevice(dtoIn);
+        await deviceDataList.handlerMap.load({});
+        setEditingId(null);
+        setToast("Device updated.");
+      } catch (e) {
+        console.error("Update failed:", e);
+        setToast("Failed to update device.");
       } finally {
         setPendingId(null);
       }
@@ -302,39 +331,90 @@ let Devices = createVisualComponent({
                     </td>
                   </tr>
                 ) : (
-                  devices.map((device) => (
-                    <tr key={device.id}>
-                      <td className={Css.td()}>{device.name}</td>
-                      <td className={Css.td()}>{device.deviceEui}</td>
-                      <td className={Css.td()}>{device.description || "—"}</td>
-                      <td className={Css.td()}>
-                        <span className={Css.badge(STATE_COLOR[device.state])}>{device.state}</span>
-                      </td>
-                      <td className={Css.td()}>
-                        <div className={Css.actionCell()}>
-                          <select
-                            className={Css.select()}
-                            value={device.state}
-                            disabled={pendingId === device.id}
-                            onChange={(e) => handleSetState(device.id, e.target.value)}
-                          >
-                            {STATES.map((s) => (
-                              <option key={s} value={s}>{s}</option>
-                            ))}
-                          </select>
-                          <Uu5Elements.Button
-                            onClick={() => handleDelete(device.id)}
-                            disabled={pendingId === device.id}
-                            colorScheme="negative"
-                            significance="subdued"
-                            size="s"
-                          >
-                            Delete
-                          </Uu5Elements.Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                  devices.map((device) =>
+                    editingId === device.id ? (
+                      <tr key={device.id}>
+                        <td className={Css.td()}>
+                          <input
+                            className={Css.input()}
+                            value={editValues.name}
+                            onChange={(e) => setEditValues((v) => ({ ...v, name: e.target.value }))}
+                          />
+                        </td>
+                        <td className={Css.td()}>{device.deviceEui}</td>
+                        <td className={Css.td()}>
+                          <input
+                            className={Css.inputWide()}
+                            placeholder="Optional"
+                            value={editValues.description}
+                            onChange={(e) => setEditValues((v) => ({ ...v, description: e.target.value }))}
+                          />
+                        </td>
+                        <td className={Css.td()}>
+                          <span className={Css.badge(STATE_COLOR[device.state])}>{device.state}</span>
+                        </td>
+                        <td className={Css.td()}>
+                          <div className={Css.actionCell()}>
+                            <Uu5Elements.Button
+                              onClick={() => handleUpdate(device.id)}
+                              disabled={pendingId === device.id}
+                              significance="highlighted"
+                              colorScheme="primary"
+                              size="s"
+                            >
+                              Save
+                            </Uu5Elements.Button>
+                            <Uu5Elements.Button
+                              onClick={cancelEdit}
+                              significance="subdued"
+                              size="s"
+                            >
+                              Cancel
+                            </Uu5Elements.Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr key={device.id}>
+                        <td className={Css.td()}>{device.name}</td>
+                        <td className={Css.td()}>{device.deviceEui}</td>
+                        <td className={Css.td()}>{device.description || "—"}</td>
+                        <td className={Css.td()}>
+                          <span className={Css.badge(STATE_COLOR[device.state])}>{device.state}</span>
+                        </td>
+                        <td className={Css.td()}>
+                          <div className={Css.actionCell()}>
+                            <select
+                              className={Css.select()}
+                              value={device.state}
+                              disabled={pendingId === device.id}
+                              onChange={(e) => handleSetState(device.id, e.target.value)}
+                            >
+                              {STATES.map((s) => (
+                                <option key={s} value={s}>{s}</option>
+                              ))}
+                            </select>
+                            <Uu5Elements.Button
+                              onClick={() => startEdit(device)}
+                              significance="subdued"
+                              size="s"
+                            >
+                              Edit
+                            </Uu5Elements.Button>
+                            <Uu5Elements.Button
+                              onClick={() => handleDelete(device.id)}
+                              disabled={pendingId === device.id}
+                              colorScheme="negative"
+                              significance="subdued"
+                              size="s"
+                            >
+                              Delete
+                            </Uu5Elements.Button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )
                 )}
               </tbody>
             </table>

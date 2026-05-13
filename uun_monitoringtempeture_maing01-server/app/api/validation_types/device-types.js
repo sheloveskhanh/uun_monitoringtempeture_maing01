@@ -22,3 +22,9 @@ const deviceSetStateDtoInType = shape({
   id: mongoId().isRequired(),
   state: string().isRequired(),
 });
+
+const deviceUpdateDtoInType = shape({
+  id: mongoId().isRequired(),
+  name: string(3, 255),
+  description: string(3, 4000),
+});
