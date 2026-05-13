@@ -2,6 +2,16 @@
 import { createVisualComponent, Utils, useDataList, useState, useEffect } from "uu5g05";
 import Uu5Elements from "uu5g05-elements";
 import { withRoute } from "uu_plus4u5g02-app";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 import Config from "./config/config.js";
 import RouteBar from "../core/route-bar.js";
 import Calls from "../calls.js";
@@ -17,7 +27,7 @@ const Css = {
   root: () =>
     Config.Css.css({
       padding: "0 24px 32px",
-      maxWidth: 960,
+      maxWidth: 1000,
       margin: "0 auto",
     }),
   statRow: () =>
@@ -65,6 +75,37 @@ const Css = {
       fontWeight: 600,
       margin: "28px 0 12px",
       color: "#333",
+    }),
+  deviceBar: () =>
+    Config.Css.css({
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+      margin: "24px 0 16px",
+    }),
+  deviceLabel: () =>
+    Config.Css.css({
+      fontSize: 14,
+      color: "#555",
+      fontWeight: 500,
+    }),
+  deviceSelect: () =>
+    Config.Css.css({
+      padding: "7px 12px",
+      border: "1px solid #ccc",
+      borderRadius: 6,
+      fontSize: 14,
+      background: "#fff",
+      outline: "none",
+      minWidth: 220,
+    }),
+  chartCard: () =>
+    Config.Css.css({
+      background: "#fff",
+      border: "1px solid #e0e0e0",
+      borderRadius: 10,
+      padding: "20px 16px 8px",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
     }),
   table: () =>
     Config.Css.css({
@@ -115,26 +156,13 @@ const Css = {
       whiteSpace: "nowrap",
     }),
   alertInfo: () =>
-    Config.Css.css({
-      flex: 1,
-    }),
+    Config.Css.css({ flex: 1 }),
   alertMessage: () =>
-    Config.Css.css({
-      fontSize: 14,
-      color: "#333",
-    }),
+    Config.Css.css({ fontSize: 14, color: "#333" }),
   alertMeta: () =>
-    Config.Css.css({
-      fontSize: 12,
-      color: "#888",
-      marginTop: 3,
-    }),
+    Config.Css.css({ fontSize: 12, color: "#888", marginTop: 3 }),
   emptyNote: () =>
-    Config.Css.css({
-      color: "#999",
-      fontSize: 14,
-      padding: "12px 0",
-    }),
+    Config.Css.css({ color: "#999", fontSize: 14, padding: "12px 0" }),
   toast: () =>
     Config.Css.css({
       position: "fixed",
@@ -155,6 +183,11 @@ const Css = {
 function formatDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleString();
+}
+
+function formatTime(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 }
 
 function StatCard({ icon, label, value, iconColor }) {
@@ -187,6 +220,9 @@ let Dashboard = createVisualComponent({
     //@@viewOn:private
     const [pendingId, setPendingId] = useState(null);
     const [toast, setToast] = useState(null);
+    const [selectedEui, setSelectedEui] = useState(null);
+    const [deviceReadings, setDeviceReadings] = useState([]);
+    const [deviceReadingsLoading, setDeviceReadingsLoading] = useState(false);
 
     useEffect(() => {
       if (!toast) return;
@@ -194,8 +230,8 @@ let Dashboard = createVisualComponent({
       return () => clearTimeout(t);
     }, [toast]);
 
-    const readingDataList = useDataList({
-      handlerMap: { load: Calls.listReadings },
+    const deviceDataList = useDataList({
+      handlerMap: { load: Calls.listDevices },
       initialDtoIn: {},
     });
 
@@ -204,14 +240,53 @@ let Dashboard = createVisualComponent({
       initialDtoIn: { status: "open" },
     });
 
-    const isLoading = readingDataList.state === "pendingNoData" || alertDataList.state === "pendingNoData";
+    const readingDataList = useDataList({
+      handlerMap: { load: Calls.listReadings },
+      initialDtoIn: { pageInfo: { pageSize: 1 } },
+    });
 
-    const readings = (readingDataList.data ?? []).filter(Boolean).map((d) => d.data).filter(Boolean);
-    const sortedReadings = [...readings].sort((a, b) => new Date(b.processedAt) - new Date(a.processedAt));
-    const latestReading = sortedReadings[0];
-    const recentReadings = sortedReadings.slice(0, 5);
-
+    const devices = (deviceDataList.data ?? []).filter(Boolean).map((d) => d.data).filter(Boolean);
     const activeAlerts = (alertDataList.data ?? []).filter(Boolean).map((d) => d.data).filter(Boolean);
+    const allReadings = (readingDataList.data ?? []).filter(Boolean).map((d) => d.data).filter(Boolean);
+    const latestReading = allReadings[0];
+
+    // Auto-select first active device
+    useEffect(() => {
+      if (devices.length > 0 && !selectedEui) {
+        const firstActive = devices.find((d) => d.state === "active") || devices[0];
+        setSelectedEui(firstActive.deviceEui);
+      }
+    }, [devices.length]);
+
+    // Load readings for selected device
+    useEffect(() => {
+      if (!selectedEui) return;
+      setDeviceReadingsLoading(true);
+      Calls.listReadings({ deviceEui: selectedEui, pageInfo: { pageSize: 50 } })
+        .then((res) => {
+          const items = (res.itemList ?? []).filter(Boolean);
+          setDeviceReadings(items);
+        })
+        .catch(() => setDeviceReadings([]))
+        .finally(() => setDeviceReadingsLoading(false));
+    }, [selectedEui]);
+
+    const chartData = [...deviceReadings]
+      .sort((a, b) => new Date(a.processedAt) - new Date(b.processedAt))
+      .map((r) => ({
+        time: formatTime(r.processedAt),
+        temperature: parseFloat(r.temperature),
+        battery: parseFloat(r.voltageRest),
+      }));
+
+    const recentReadings = [...deviceReadings]
+      .sort((a, b) => new Date(b.processedAt) - new Date(a.processedAt))
+      .slice(0, 5);
+
+    const isLoading =
+      deviceDataList.state === "pendingNoData" ||
+      alertDataList.state === "pendingNoData" ||
+      readingDataList.state === "pendingNoData";
 
     async function handleAcknowledge(id) {
       setPendingId(id);
@@ -220,7 +295,6 @@ let Dashboard = createVisualComponent({
         await alertDataList.handlerMap.load({ status: "open" });
         setToast("Alert acknowledged.");
       } catch (e) {
-        console.error("Acknowledge failed:", e);
         setToast("Failed to acknowledge alert.");
       } finally {
         setPendingId(null);
@@ -231,15 +305,15 @@ let Dashboard = createVisualComponent({
     //@@viewOn:render
     const attrs = Utils.VisualComponent.getAttrs(props);
 
-    if (isLoading) {
-      return <Uu5Elements.Pending />;
-    }
+    if (isLoading) return <Uu5Elements.Pending />;
 
     return (
       <div {...attrs}>
         {toast && <div className={Css.toast()}>{toast}</div>}
         <RouteBar />
         <div className={Css.root()}>
+
+          {/* Global stat cards */}
           <div className={Css.statRow()}>
             <StatCard
               icon="mdi-thermometer"
@@ -248,10 +322,10 @@ let Dashboard = createVisualComponent({
               iconColor="#e53935"
             />
             <StatCard
-              icon="mdi-battery"
-              label="Battery Voltage"
-              value={latestReading ? `${latestReading.voltageRest} V` : "—"}
-              iconColor="#43a047"
+              icon="mdi-devices"
+              label="Total Devices"
+              value={String(devices.length)}
+              iconColor="#1976d2"
             />
             <StatCard
               icon="mdi-bell-alert"
@@ -261,6 +335,67 @@ let Dashboard = createVisualComponent({
             />
           </div>
 
+          {/* Per-device section */}
+          <div className={Css.deviceBar()}>
+            <span className={Css.deviceLabel()}>Device:</span>
+            <select
+              className={Css.deviceSelect()}
+              value={selectedEui || ""}
+              onChange={(e) => setSelectedEui(e.target.value)}
+            >
+              {devices.map((d) => (
+                <option key={d.deviceEui} value={d.deviceEui}>
+                  {d.name} ({d.deviceEui})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Temperature chart */}
+          <div className={Css.sectionTitle()}>Temperature Over Time</div>
+          <div className={Css.chartCard()}>
+            {deviceReadingsLoading ? (
+              <Uu5Elements.Pending />
+            ) : chartData.length === 0 ? (
+              <div className={Css.emptyNote()}>No readings for this device yet.</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={chartData} margin={{ top: 4, right: 24, left: 0, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis
+                    dataKey="time"
+                    tick={{ fontSize: 11 }}
+                    interval="preserveStartEnd"
+                    tickLine={false}
+                  />
+                  <YAxis yAxisId="temp" tick={{ fontSize: 11 }} tickLine={false} unit="°C" />
+                  <YAxis yAxisId="bat" orientation="right" tick={{ fontSize: 11 }} tickLine={false} unit="V" />
+                  <Tooltip />
+                  <Legend wrapperStyle={{ fontSize: 13 }} />
+                  <Line
+                    yAxisId="temp"
+                    type="monotone"
+                    dataKey="temperature"
+                    stroke="#e53935"
+                    dot={false}
+                    strokeWidth={2}
+                    name="Temperature (°C)"
+                  />
+                  <Line
+                    yAxisId="bat"
+                    type="monotone"
+                    dataKey="battery"
+                    stroke="#43a047"
+                    dot={false}
+                    strokeWidth={2}
+                    name="Battery (V)"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Recent readings table */}
           <div className={Css.sectionTitle()}>Recent Readings</div>
           {recentReadings.length === 0 ? (
             <div className={Css.emptyNote()}>No readings yet.</div>
@@ -285,6 +420,7 @@ let Dashboard = createVisualComponent({
             </table>
           )}
 
+          {/* Active alerts */}
           <div className={Css.sectionTitle()}>Active Alerts</div>
           {activeAlerts.length === 0 ? (
             <div className={Css.emptyNote()}>No active alerts.</div>
