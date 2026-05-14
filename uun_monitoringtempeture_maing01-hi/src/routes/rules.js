@@ -129,7 +129,7 @@ let Rules = createVisualComponent({
         setToast("Min must be lower than max.");
         return null;
       }
-      return { minC, maxC, batteryLowV: bat };
+      return { minC: String(vals.minC), maxC: String(vals.maxC), batteryLowV: String(vals.batteryLowV) };
     }
 
     async function handleCreate() {
