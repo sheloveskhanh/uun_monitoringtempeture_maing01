@@ -8,7 +8,7 @@ import Calls from "../calls.js";
 //@@viewOff:imports
 
 //@@viewOn:constants
-const EMPTY_FORM = { name: "", deviceEui: "", description: "" };
+const EMPTY_FORM = { name: "", deviceEui: "", description: "", minC: "", maxC: "", batteryLowV: "3.2" };
 const STATE_COLOR = {
   initial: "#888",
   active: "#43a047",
@@ -171,10 +171,36 @@ let Devices = createVisualComponent({
         const dtoIn = { name: createValues.name, deviceEui: createValues.deviceEui };
         if (createValues.description.trim()) dtoIn.description = createValues.description.trim();
         await Calls.createDevice(dtoIn);
+
+        const minC = parseFloat(createValues.minC);
+        const maxC = parseFloat(createValues.maxC);
+        const bat  = parseFloat(createValues.batteryLowV);
+        const hasRule = createValues.minC.trim() && createValues.maxC.trim();
+        if (hasRule) {
+          if (Number.isNaN(minC) || Number.isNaN(maxC) || Number.isNaN(bat)) {
+            setToast("Device created. Rule skipped: fields must be numbers.");
+          } else if (minC >= maxC) {
+            setToast("Device created. Rule skipped: min must be lower than max.");
+          } else {
+            try {
+              await Calls.createRule({
+                deviceEui: createValues.deviceEui,
+                minC: String(createValues.minC),
+                maxC: String(createValues.maxC),
+                batteryLowV: String(createValues.batteryLowV),
+              });
+              setToast("Device and rule created.");
+            } catch (re) {
+              setToast("Device created. Rule failed: " + (re?.message ?? "unknown error"));
+            }
+          }
+        } else {
+          setToast("Device created.");
+        }
+
         await deviceDataList.handlerMap.load({});
         setShowCreate(false);
         setCreateValues(EMPTY_FORM);
-        setToast("Device created.");
       } catch (e) {
         console.error("Create failed:", e);
         setToast("Failed to create device.");
@@ -273,55 +299,100 @@ let Devices = createVisualComponent({
               </thead>
               <tbody>
                 {showCreate && (
-                  <tr>
-                    <td className={Css.td()}>
-                      <input
-                        className={Css.input()}
-                        placeholder="Name"
-                        value={createValues.name}
-                        onChange={(e) => setCreateValues((v) => ({ ...v, name: e.target.value }))}
-                      />
-                    </td>
-                    <td className={Css.td()}>
-                      <input
-                        className={Css.inputWide()}
-                        placeholder="e.g. 24c4c981ad293382"
-                        value={createValues.deviceEui}
-                        onChange={(e) => setCreateValues((v) => ({ ...v, deviceEui: e.target.value }))}
-                      />
-                    </td>
-                    <td className={Css.td()}>
-                      <input
-                        className={Css.inputWide()}
-                        placeholder="Optional"
-                        value={createValues.description}
-                        onChange={(e) => setCreateValues((v) => ({ ...v, description: e.target.value }))}
-                      />
-                    </td>
-                    <td className={Css.td()}>
-                      <span className={Css.badge(STATE_COLOR.initial)}>initial</span>
-                    </td>
-                    <td className={Css.td()}>
-                      <div className={Css.actionCell()}>
-                        <Uu5Elements.Button
-                          onClick={handleCreate}
-                          disabled={pendingId === "new"}
-                          significance="highlighted"
-                          colorScheme="primary"
-                          size="s"
-                        >
-                          Save
-                        </Uu5Elements.Button>
-                        <Uu5Elements.Button
-                          onClick={() => { setShowCreate(false); setCreateValues(EMPTY_FORM); }}
-                          significance="subdued"
-                          size="s"
-                        >
-                          Cancel
-                        </Uu5Elements.Button>
-                      </div>
-                    </td>
-                  </tr>
+                  <>
+                    <tr>
+                      <td className={Css.td()}>
+                        <input
+                          className={Css.input()}
+                          placeholder="Name"
+                          value={createValues.name}
+                          onChange={(e) => setCreateValues((v) => ({ ...v, name: e.target.value }))}
+                        />
+                      </td>
+                      <td className={Css.td()}>
+                        <input
+                          className={Css.inputWide()}
+                          placeholder="e.g. 24c4c981ad293382"
+                          value={createValues.deviceEui}
+                          onChange={(e) => setCreateValues((v) => ({ ...v, deviceEui: e.target.value }))}
+                        />
+                      </td>
+                      <td className={Css.td()}>
+                        <input
+                          className={Css.inputWide()}
+                          placeholder="Optional"
+                          value={createValues.description}
+                          onChange={(e) => setCreateValues((v) => ({ ...v, description: e.target.value }))}
+                        />
+                      </td>
+                      <td className={Css.td()}>
+                        <span className={Css.badge(STATE_COLOR.initial)}>initial</span>
+                      </td>
+                      <td className={Css.td()}>
+                        <div className={Css.actionCell()}>
+                          <Uu5Elements.Button
+                            onClick={handleCreate}
+                            disabled={pendingId === "new"}
+                            significance="highlighted"
+                            colorScheme="primary"
+                            size="s"
+                          >
+                            Save
+                          </Uu5Elements.Button>
+                          <Uu5Elements.Button
+                            onClick={() => { setShowCreate(false); setCreateValues(EMPTY_FORM); }}
+                            significance="subdued"
+                            size="s"
+                          >
+                            Cancel
+                          </Uu5Elements.Button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colSpan={5} style={{ background: "#f6faff", borderBottom: "1px solid #dce7f4", padding: "10px 16px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: "#1976d2", textTransform: "uppercase", letterSpacing: "0.6px", whiteSpace: "nowrap" }}>
+                            Rule (optional)
+                          </span>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <label style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                              <span style={{ fontSize: 10, fontWeight: 600, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px" }}>Min °C</span>
+                              <input
+                                className={Css.input()}
+                                placeholder="e.g. 2"
+                                value={createValues.minC}
+                                onChange={(e) => setCreateValues((v) => ({ ...v, minC: e.target.value }))}
+                                style={{ width: 80 }}
+                              />
+                            </label>
+                            <span style={{ color: "#aaa", fontSize: 12, marginTop: 14 }}>to</span>
+                            <label style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                              <span style={{ fontSize: 10, fontWeight: 600, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px" }}>Max °C</span>
+                              <input
+                                className={Css.input()}
+                                placeholder="e.g. 8"
+                                value={createValues.maxC}
+                                onChange={(e) => setCreateValues((v) => ({ ...v, maxC: e.target.value }))}
+                                style={{ width: 80 }}
+                              />
+                            </label>
+                          </div>
+                          <label style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                            <span style={{ fontSize: 10, fontWeight: 600, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px" }}>Battery Low (V)</span>
+                            <input
+                              className={Css.input()}
+                              placeholder="3.2"
+                              value={createValues.batteryLowV}
+                              onChange={(e) => setCreateValues((v) => ({ ...v, batteryLowV: e.target.value }))}
+                              style={{ width: 80 }}
+                            />
+                          </label>
+                          <span style={{ fontSize: 12, color: "#aaa" }}>Leave Min/Max blank to skip rule creation.</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </>
                 )}
 
                 {devices.length === 0 && !showCreate ? (
