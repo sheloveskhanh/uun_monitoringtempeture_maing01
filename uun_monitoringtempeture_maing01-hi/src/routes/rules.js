@@ -97,7 +97,7 @@ let Rules = createVisualComponent({
     devices.forEach(d => { devicesByEui[d.deviceEui] = d; });
 
     const devicesWithoutRule = devices.filter(
-      d => d.state === "active" && !rules.some(r => r.deviceEui === d.deviceEui)
+      d => !rules.some(r => r.deviceEui === d.deviceEui)
     );
 
     function startCreate() {
