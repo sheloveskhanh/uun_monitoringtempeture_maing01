@@ -536,6 +536,27 @@
   padding: 7px 10px;
   font-size: 13px;
 }
+.range-toggle {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.range-toggle-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  transition: background 0.15s, color 0.15s;
+}
+.range-toggle-btn:hover { background: #f5f5f5; }
+.range-toggle-btn.active {
+  background: #1a73e8;
+  color: #fff;
+}
 
 .chart-legend {
   display: flex;

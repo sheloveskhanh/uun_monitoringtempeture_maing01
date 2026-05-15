@@ -86,6 +86,7 @@ let Dashboard = createVisualComponent({
     const [pendingId, setPendingId] = useState(null);
     const [toast, setToast] = useState(null);
     const [selectedEui, setSelectedEui] = useState(null);
+    const [chartRange, setChartRange] = useState("1d");
     const [deviceReadings, setDeviceReadings] = useState([]);
     const [deviceReadingsLoading, setDeviceReadingsLoading] = useState(false);
     const [rule, setRule] = useState(null);
@@ -119,21 +120,39 @@ let Dashboard = createVisualComponent({
 
     useEffect(() => {
       if (!selectedEui) return;
+      let cancelled = false;
       setDeviceReadingsLoading(true);
-      Promise.all([
-        Calls.listReadings({ deviceEui: selectedEui, pageInfo: { pageSize: 50 } }),
-        Calls.listRules({ deviceEui: selectedEui }),
-      ])
-        .then(([readRes, ruleRes]) => {
-          setDeviceReadings((readRes.itemList ?? []).filter(Boolean));
+
+      async function fetchReadings() {
+        let readings;
+        const days = chartRange === "5d" ? 5 : 1;
+        const from = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+        const all = [];
+        let pageIndex = 0;
+        while (true) {
+          const res = await Calls.listReadings({ deviceEui: selectedEui, from, pageInfo: { pageSize: 100, pageIndex } });
+          const items = (res.itemList ?? []).filter(Boolean);
+          all.push(...items);
+          if (items.length < 100 || all.length >= (res.pageInfo?.total ?? 0)) break;
+          pageIndex++;
+        }
+        readings = all;
+        return readings;
+      }
+
+      Promise.all([fetchReadings(), Calls.listRules({ deviceEui: selectedEui })])
+        .then(([readings, ruleRes]) => {
+          if (cancelled) return;
+          setDeviceReadings(readings);
           setRule(((ruleRes.itemList ?? []).filter(Boolean))[0] ?? null);
         })
         .catch(() => {
-          setDeviceReadings([]);
-          setRule(null);
+          if (!cancelled) { setDeviceReadings([]); setRule(null); }
         })
-        .finally(() => setDeviceReadingsLoading(false));
-    }, [selectedEui, refreshKey]);
+        .finally(() => { if (!cancelled) setDeviceReadingsLoading(false); });
+
+      return () => { cancelled = true; };
+    }, [selectedEui, chartRange, refreshKey]);
 
     const chartData = [...deviceReadings]
       .sort((a, b) => new Date(a.processedAt) - new Date(b.processedAt))
@@ -291,9 +310,25 @@ let Dashboard = createVisualComponent({
               <header className="card-header">
                 <div>
                   <h2 className="card-title">Temperature &amp; Battery</h2>
-                  <div className="card-sub">Last 50 readings · newest on right</div>
+                  <div className="card-sub">
+                    {chartRange === "5d" ? "Last 5 days" : "Last 1 day"} · newest on right
+                  </div>
                 </div>
                 <div className="chart-toolbar">
+                  <div className="range-toggle">
+                    <button
+                      className={"range-toggle-btn" + (chartRange === "1d" ? " active" : "")}
+                      onClick={() => setChartRange("1d")}
+                    >
+                      1 day
+                    </button>
+                    <button
+                      className={"range-toggle-btn" + (chartRange === "5d" ? " active" : "")}
+                      onClick={() => setChartRange("5d")}
+                    >
+                      5 days
+                    </button>
+                  </div>
                   <select
                     className="filter-select"
                     value={selectedEui || ""}
