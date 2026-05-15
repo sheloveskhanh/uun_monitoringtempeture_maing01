@@ -777,8 +777,8 @@
 
 .device-pill {
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px;
 }
 .device-pill-name {
   font-weight: 600;
@@ -800,4 +800,234 @@
 .icon-btn:disabled:hover {
   background: transparent;
   border-color: transparent;
+}
+
+
+/* ============================================================
+   Rules additions
+   ============================================================ */
+
+.info-banner {
+  background: #e8f5e9;
+  border: 1px solid #c9e7cb;
+  color: #2e7d32;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.row-edit td {
+  background: #f6faff !important;
+  border-bottom: 1px solid #dce7f4 !important;
+}
+
+.inline-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.inline-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inline-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #888;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.inline-input {
+  padding: 7px 10px;
+  border: 1px solid #d6dee8;
+  border-radius: 6px;
+  font-size: 13px;
+  width: 80px;
+  outline: none;
+  background: #fff;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.inline-input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
+}
+
+.inline-sep {
+  color: #aaa;
+  font-size: 12px;
+  padding-bottom: 8px;
+}
+
+.action-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.btn-danger:hover { background: #b71c1c; }
+
+.range-cell { display: flex; flex-direction: column; gap: 6px; max-width: 280px; }
+
+.range-cell-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.range-cell-val {
+  color: #1a1a2e;
+  font-weight: 700;
+  font-size: 15px;
+}
+.range-cell-sep {
+  color: #aaa;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.range-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.range-bar-track {
+  position: relative;
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.range-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: #43a047;
+  border-radius: 3px;
+}
+.range-bar-tick {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.battery-gauge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.battery-gauge-bar {
+  position: relative;
+  width: 60px;
+  height: 12px;
+  border: 1.5px solid #c0c8d4;
+  border-radius: 3px;
+  background: #fff;
+}
+.battery-gauge-bar::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  background: #c0c8d4;
+  border-radius: 0 2px 2px 0;
+}
+.battery-gauge-fill {
+  position: absolute;
+  inset: 1px;
+  border-radius: 1px;
+}
+.battery-gauge-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: backdrop-in 0.15s ease-out;
+}
+@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.2);
+  min-width: 420px;
+  max-width: 520px;
+  animation: modal-in 0.18s ease-out;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 18px 22px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.modal-foot {
+  padding: 14px 22px 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }
