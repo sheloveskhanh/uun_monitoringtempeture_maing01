@@ -1,5 +1,5 @@
 //@@viewOn:imports
-import { createVisualComponent, Utils, useState, useEffect, useMemo } from "uu5g05";
+import { createVisualComponent, Utils, useState, useEffect, useMemo, useRef } from "uu5g05";
 import Uu5Elements from "uu5g05-elements";
 import { withRoute } from "uu_plus4u5g02-app";
 import Config from "./config/config.js";
@@ -26,19 +26,20 @@ const EMPTY_CREATE_FORM = {
 //@@viewOff:constants
 
 //@@viewOn:helpers
-function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, openMenuId, menuPos, onPillClick }) {
+  const pillRef = useRef(null);
   const hasRule = rules.some((r) => r.deviceEui === device.deviceEui);
   const allowed = TRANSITIONS[device.state] || [];
   const isTerminal = allowed.length === 0;
   const isPending = pendingId === device.id;
+  const menuOpen = openMenuId === device.id;
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const close = () => setMenuOpen(false);
-    window.addEventListener("click", close);
-    return () => window.removeEventListener("click", close);
-  }, [menuOpen]);
+  function handlePillClick() {
+    if (pillRef.current) {
+      const rect = pillRef.current.getBoundingClientRect();
+      onPillClick(menuOpen ? null : device.id, rect);
+    }
+  }
 
   return (
     <tr>
@@ -68,10 +69,11 @@ function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId }) {
       <td>
         <div className="state-cell" onClick={(e) => e.stopPropagation()}>
           <button
+            ref={pillRef}
             className={"state-pill " + device.state}
             disabled={isTerminal || isPending}
             title={isTerminal ? "Terminal state" : "Change state"}
-            onClick={() => setMenuOpen((v) => !v)}
+            onClick={handlePillClick}
           >
             <span className={"badge-dot inline-dot " + device.state}></span>
             {device.state}
@@ -83,14 +85,14 @@ function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId }) {
             )}
           </button>
           {menuOpen && allowed.length > 0 && (
-            <div className="state-menu">
+            <div className="state-menu" style={{ position: "fixed", top: menuPos.top, left: menuPos.left }}>
               <div className="state-menu-label">Transition to…</div>
               {allowed.map((s) => (
                 <button
                   key={s}
                   className="state-menu-item"
                   onClick={() => {
-                    setMenuOpen(false);
+                    onPillClick(null, null);
                     onSetState(device.id, s);
                   }}
                 >
@@ -212,6 +214,8 @@ let Devices = createVisualComponent({
     const [editingId, setEditingId] = useState(null);
     const [confirmDelete, setConfirmDelete] = useState(null);
     const [pendingId, setPendingId] = useState(null);
+    const [openMenuId, setOpenMenuId] = useState(null);
+    const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
 
     const [search, setSearch] = useState("");
     const [stateFilter, setStateFilter] = useState("all");
@@ -232,6 +236,22 @@ let Devices = createVisualComponent({
       const t = setTimeout(() => setToast(null), 3000);
       return () => clearTimeout(t);
     }, [toast]);
+
+    useEffect(() => {
+      if (!openMenuId) return;
+      const close = () => setOpenMenuId(null);
+      window.addEventListener("click", close);
+      return () => window.removeEventListener("click", close);
+    }, [openMenuId]);
+
+    function handlePillClick(id, rect) {
+      if (id === null) {
+        setOpenMenuId(null);
+      } else {
+        setMenuPos({ top: rect.bottom + 6, left: rect.left });
+        setOpenMenuId(id);
+      }
+    }
 
     const counts = useMemo(() => {
       const c = { all: devices.length };
@@ -644,8 +664,11 @@ let Devices = createVisualComponent({
                         device={device}
                         rules={rules}
                         pendingId={pendingId}
-                        onEdit={(d) => { setEditingId(d.id); setShowCreate(false); }}
-                        onDelete={(d) => setConfirmDelete(d)}
+                        openMenuId={openMenuId}
+                        menuPos={menuPos}
+                        onPillClick={handlePillClick}
+                        onEdit={(d) => { setEditingId(d.id); setShowCreate(false); setOpenMenuId(null); }}
+                        onDelete={(d) => { setConfirmDelete(d); setOpenMenuId(null); }}
                         onSetState={handleSetState}
                       />
                     )

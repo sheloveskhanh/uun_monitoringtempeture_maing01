@@ -142,7 +142,7 @@
   background: #fff;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
-  overflow: clip;
+  overflow: hidden;
 }
 
 .data-table {
