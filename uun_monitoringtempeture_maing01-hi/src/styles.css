@@ -1031,3 +1031,372 @@
   gap: 10px;
   justify-content: flex-end;
 }
+
+
+/* ============================================================
+   Devices additions (state tabs, state pill+menu, search box)
+   ============================================================ */
+
+.state-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.state-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.12s;
+  text-transform: capitalize;
+}
+.state-tab:hover { background: #f1f3f6; color: #1a1a2e; }
+.state-tab.active {
+  background: #e8f0fe;
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.state-tab-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: inherit;
+  opacity: 0.7;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-variant-numeric: tabular-nums;
+}
+.state-tab.active .state-tab-count { background: rgba(21, 101, 192, 0.15); opacity: 1; }
+
+/* Inline dots (matching badge color system) */
+.inline-dot { width: 8px; height: 8px; display: inline-block; border-radius: 50%; }
+.inline-dot.active    { background: #43a047; }
+.inline-dot.suspended { background: #ff9800; }
+.inline-dot.initial   { background: #bbb; }
+.inline-dot.inactive  { background: #bbb; }
+.inline-dot.closed    { background: #888; }
+.inline-dot.cancelled { background: #e91e63; }
+
+/* Search box */
+.search-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  min-width: 260px;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.search-box:focus-within {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.12);
+}
+.search-input {
+  border: none;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+  flex: 1;
+  background: transparent;
+  color: #1a1a2e;
+}
+.search-input::placeholder { color: #aaa; }
+.search-clear {
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  color: #888;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-clear:hover { background: rgba(0, 0, 0, 0.1); }
+
+/* State pill (clickable, opens menu) */
+.state-cell { position: relative; display: inline-block; }
+
+.state-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: #f5f5f5;
+  color: #666;
+  transition: all 0.12s;
+}
+.state-pill:hover:not(:disabled) {
+  background: #fff;
+  border-color: #d6dee8;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+.state-pill:disabled { cursor: not-allowed; }
+
+.state-pill.active    { background: #e8f5e9; color: #2e7d32; }
+.state-pill.active .inline-dot { background: #43a047; }
+.state-pill.suspended { background: #fff3e0; color: #e65100; }
+.state-pill.suspended .inline-dot { background: #ff9800; }
+.state-pill.initial   { background: #f5f5f5; color: #666; }
+.state-pill.initial .inline-dot { background: #bbb; }
+.state-pill.closed    { background: #eceff1; color: #455a64; }
+.state-pill.closed .inline-dot { background: #888; }
+.state-pill.cancelled { background: #fce4ec; color: #880e4f; }
+.state-pill.cancelled .inline-dot { background: #e91e63; }
+
+.state-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  min-width: 180px;
+  padding: 6px;
+  animation: menu-in 0.12s ease-out;
+}
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.state-menu-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 6px 10px 4px;
+}
+
+.state-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+  text-transform: capitalize;
+  color: #1a1a2e;
+  cursor: pointer;
+  text-align: left;
+}
+.state-menu-item:hover { background: #f5f5f5; }
+
+.devices-table td { padding-top: 14px; padding-bottom: 14px; }
+
+/* Rule indicator pill on device rows */
+.rule-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-left: 8px;
+  align-self: center;
+}
+.rule-pill.has {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.rule-pill.missing {
+  background: #f5f5f5;
+  color: #888;
+}
+
+
+/* ── Devices: inline create form (full-row) ──────────── */
+.row-create > .create-cell {
+  background: #f6faff !important;
+  border-bottom: 1px solid #dce7f4 !important;
+  padding: 0 !important;
+}
+
+.create-form {
+  padding: 20px 22px 18px;
+}
+
+.create-form-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1.3fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.create-form-divider {
+  width: 1px;
+  background: #dce7f4;
+  align-self: stretch;
+  min-height: 80px;
+}
+
+.create-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.create-form-section.is-off { opacity: 0.6; }
+.create-form-section.is-off .create-form-section-head { opacity: 1; }
+
+.create-form-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.1px;
+}
+
+.create-form-section-hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: #888;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+
+.create-form-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 18px;
+  align-items: flex-end;
+}
+
+/* Toggle (used for "Initial rule" on/off) */
+.create-form-toggle {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.create-form-toggle input {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+.create-form-toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #d6dee8;
+  transition: background 0.15s;
+}
+.create-form-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.18s;
+}
+.create-form-toggle input:checked ~ .create-form-toggle-track {
+  background: #1976d2;
+}
+.create-form-toggle input:checked ~ .create-form-toggle-track .create-form-toggle-thumb {
+  transform: translateX(14px);
+}
+
+/* Presets row */
+.create-form-presets {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.create-form-presets-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
+.preset-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid #d6dee8;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+.preset-chip:hover {
+  background: #1976d2;
+  border-color: #1976d2;
+  color: #fff;
+}
+
+/* Foot row of the create form */
+.create-form-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #dce7f4;
+}
+
+.create-form-state-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .create-form-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .create-form-divider {
+    width: auto;
+    height: 1px;
+    min-height: 0;
+  }
+}
