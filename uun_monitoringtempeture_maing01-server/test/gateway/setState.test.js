@@ -11,39 +11,43 @@ afterAll(async () => {
   await TestHelper.teardown();
 });
 
-describe("device/delete", () => {
-  test("HDS - deletes an existing device", async () => {
+describe("gateway/setState", () => {
+  test("HDS - activates a gateway", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
     const created = await TestHelper.executePostCommand(
-      "device/create",
-      { name: "Temp Sensor Del", deviceEui: "DEL000000001" },
+      "gateway/create",
+      { name: "Gateway State Test", uuIdentity: "GW-STATE-0001" },
       session,
     );
-    const id = created.data.id;
 
-    const result = await TestHelper.executePostCommand("device/delete", { id }, session);
+    const result = await TestHelper.executePostCommand(
+      "gateway/setState",
+      { id: created.data.id, state: "active" },
+      session,
+    );
     expect(result.status).toBe(200);
-
-    // Confirm it's gone
-    const list = await TestHelper.executeGetCommand("device/list", {}, session);
-    const found = list.data.itemList.find((d) => d.id === id);
-    expect(found).toBeUndefined();
+    expect(result.data.state).toBe("active");
   });
 
-  test("E1 - non-existent id returns error", async () => {
+  test("E1 - non-existent gateway returns error", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
     try {
-      await TestHelper.executePostCommand("device/delete", { id: "000000000000000000000001" }, session);
+      await TestHelper.executePostCommand("gateway/setState", { id: "000000000000000000000001", state: "active" }, session);
       fail("Expected error was not thrown");
     } catch (e) {
       expect(e.status).not.toBe(200);
     }
   });
 
-  test("E2 - missing id returns invalidDtoIn", async () => {
+  test("E2 - invalid state value returns error", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
+    const created = await TestHelper.executePostCommand(
+      "gateway/create",
+      { name: "Gateway Invalid State", uuIdentity: "GW-STATE-0002" },
+      session,
+    );
     try {
-      await TestHelper.executePostCommand("device/delete", {}, session);
+      await TestHelper.executePostCommand("gateway/setState", { id: created.data.id, state: "online" }, session);
       fail("Expected error was not thrown");
     } catch (e) {
       expect(e.status).not.toBe(200);

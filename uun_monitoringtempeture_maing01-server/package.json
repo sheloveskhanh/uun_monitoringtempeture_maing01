@@ -60,6 +60,10 @@
     "env",
     "public"
   ],
+  "mongodbMemoryServer": {
+    "version": "7.0.14",
+    "arch": "arm64"
+  },
   "prettier": {
     "printWidth": 120,
     "trailingComma": "all"
