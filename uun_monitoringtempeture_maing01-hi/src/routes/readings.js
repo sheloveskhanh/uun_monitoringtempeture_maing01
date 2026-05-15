@@ -296,13 +296,12 @@ let Readings = createVisualComponent({
                     <th style={{ width: 180 }}>{sortBtn("temperature", "Temperature")}</th>
                     <th style={{ width: 140 }}>{sortBtn("voltageRest", "Battery")}</th>
                     <th style={{ width: 120 }}>Status</th>
-                    <th style={{ width: 1 }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {pageRows.length === 0 ? (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={5}>
                         <div className="empty-note" style={{ padding: "48px 0" }}>
                           <Uu5Elements.Icon icon="mdi-magnify" style={{ fontSize: 28, color: "#bbb" }} />
                           <div style={{ marginTop: 8, color: "#666", fontWeight: 600 }}>
@@ -359,11 +358,6 @@ let Readings = createVisualComponent({
                             ) : (
                               <span className={"severity-badge " + s.kind}>{s.label}</span>
                             )}
-                          </td>
-                          <td>
-                            <button className="icon-btn" title="More">
-                              <Uu5Elements.Icon icon="mdi-dots-horizontal" />
-                            </button>
                           </td>
                         </tr>
                       );
