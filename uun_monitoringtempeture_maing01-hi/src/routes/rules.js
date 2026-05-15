@@ -406,11 +406,10 @@ let Rules = createVisualComponent({
                         <td>
                           <div className="range-cell">
                             <span className="range-cell-text">
-                              <span className="range-cell-val">{rule.minC}°</span>
+                              <span className="range-cell-val">{Number(rule.minC).toFixed(1)}°</span>
                               <span className="range-cell-sep">to</span>
-                              <span className="range-cell-val">{rule.maxC}°C</span>
+                              <span className="range-cell-val">{Number(rule.maxC).toFixed(1)}°C</span>
                             </span>
-                            <RangeBar minC={rule.minC} maxC={rule.maxC} />
                           </div>
                         </td>
                         <td>
