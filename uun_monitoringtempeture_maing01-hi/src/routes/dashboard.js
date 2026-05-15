@@ -409,80 +409,8 @@ let Dashboard = createVisualComponent({
               </div>
             </section>
 
-          {/* Alerts panel */}
-          <section className="card" style={{ marginBottom: 16 }}>
-            <header className="card-header">
-              <div>
-                <h2 className="card-title">Active Alerts</h2>
-                <div className="card-sub">
-                  {deviceAlerts.length} open · acknowledge to clear
-                </div>
-              </div>
-              <button className="btn-link blue" onClick={() => setRoute("alerts")}>
-                View all →
-              </button>
-            </header>
-            <div className="alert-list">
-              {deviceAlerts.length === 0 ? (
-                <div className="empty-note" style={{ padding: "36px 0" }}>
-                  <Uu5Elements.Icon
-                    icon="mdi-check-circle-outline"
-                    style={{ fontSize: 32, color: "#43a047" }}
-                  />
-                  <div style={{ marginTop: 8, color: "#2e7d32", fontWeight: 600 }}>All clear</div>
-                  <div style={{ fontSize: 12, color: "#999" }}>No open alerts right now.</div>
-                </div>
-              ) : (
-                deviceAlerts.slice(0, 5).map((a) => {
-                  const dev = devices.find((d) => d.deviceEui === a.deviceEui);
-                  return (
-                    <div key={a.id} className="alert-item">
-                      <div className={"alert-item-marker " + a.severity} />
-                      <div className="alert-item-body">
-                        <div className="alert-item-head">
-                          <span className="alert-item-type">
-                            {ALERT_TYPE_LABEL[a.type] || a.type}
-                          </span>
-                          <SevBadge severity={a.severity} />
-                        </div>
-                        <div className="alert-item-msg">{a.message}</div>
-                        <div className="alert-item-meta">
-                          <span>{dev ? dev.name : a.deviceEui}</span>
-                          <span className="meta-sep">·</span>
-                          <span className="text-mono" style={{ fontSize: 11 }}>
-                            {a.deviceEui.slice(0, 10)}…
-                          </span>
-                          <span className="meta-sep">·</span>
-                          <span>{timeAgo(a.createdAt)}</span>
-                        </div>
-                      </div>
-                      <div className="alert-item-actions">
-                        <button
-                          className="icon-btn"
-                          title="Acknowledge"
-                          disabled={pendingId === a.id}
-                          onClick={() => handleAcknowledge(a.id)}
-                        >
-                          <Uu5Elements.Icon icon="mdi-check" style={{ fontSize: 16 }} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-            {deviceAlerts.length > 5 && (
-              <div className="panel-footer">
-                <span>{deviceAlerts.length - 5} older alerts hidden</span>
-                <button className="btn-link blue" onClick={() => setRoute("alerts")}>
-                  View all {deviceAlerts.length} →
-                </button>
-              </div>
-            )}
-          </section>
-
           {/* Recent readings */}
-          <section className="card" style={{ marginBottom: 24 }}>
+          <section className="card" style={{ marginBottom: 16 }}>
             <header className="card-header">
               <div>
                 <h2 className="card-title">Recent Readings</h2>
@@ -555,6 +483,78 @@ let Dashboard = createVisualComponent({
                 </table>
               )}
             </div>
+          </section>
+
+          {/* Alerts panel */}
+          <section className="card" style={{ marginBottom: 24 }}>
+            <header className="card-header">
+              <div>
+                <h2 className="card-title">Active Alerts</h2>
+                <div className="card-sub">
+                  {deviceAlerts.length} open · acknowledge to clear
+                </div>
+              </div>
+              <button className="btn-link blue" onClick={() => setRoute("alerts")}>
+                View all →
+              </button>
+            </header>
+            <div className="alert-list">
+              {deviceAlerts.length === 0 ? (
+                <div className="empty-note" style={{ padding: "36px 0" }}>
+                  <Uu5Elements.Icon
+                    icon="mdi-check-circle-outline"
+                    style={{ fontSize: 32, color: "#43a047" }}
+                  />
+                  <div style={{ marginTop: 8, color: "#2e7d32", fontWeight: 600 }}>All clear</div>
+                  <div style={{ fontSize: 12, color: "#999" }}>No open alerts right now.</div>
+                </div>
+              ) : (
+                deviceAlerts.slice(0, 5).map((a) => {
+                  const dev = devices.find((d) => d.deviceEui === a.deviceEui);
+                  return (
+                    <div key={a.id} className="alert-item">
+                      <div className={"alert-item-marker " + a.severity} />
+                      <div className="alert-item-body">
+                        <div className="alert-item-head">
+                          <span className="alert-item-type">
+                            {ALERT_TYPE_LABEL[a.type] || a.type}
+                          </span>
+                          <SevBadge severity={a.severity} />
+                        </div>
+                        <div className="alert-item-msg">{a.message}</div>
+                        <div className="alert-item-meta">
+                          <span>{dev ? dev.name : a.deviceEui}</span>
+                          <span className="meta-sep">·</span>
+                          <span className="text-mono" style={{ fontSize: 11 }}>
+                            {a.deviceEui.slice(0, 10)}…
+                          </span>
+                          <span className="meta-sep">·</span>
+                          <span>{timeAgo(a.createdAt)}</span>
+                        </div>
+                      </div>
+                      <div className="alert-item-actions">
+                        <button
+                          className="icon-btn"
+                          title="Acknowledge"
+                          disabled={pendingId === a.id}
+                          onClick={() => handleAcknowledge(a.id)}
+                        >
+                          <Uu5Elements.Icon icon="mdi-check" style={{ fontSize: 16 }} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            {deviceAlerts.length > 5 && (
+              <div className="panel-footer">
+                <span>{deviceAlerts.length - 5} older alerts hidden</span>
+                <button className="btn-link blue" onClick={() => setRoute("alerts")}>
+                  View all {deviceAlerts.length} →
+                </button>
+              </div>
+            )}
           </section>
 
         </div>

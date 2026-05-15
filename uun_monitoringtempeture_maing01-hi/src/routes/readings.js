@@ -72,6 +72,7 @@ let Readings = createVisualComponent({
     const [devices, setDevices] = useState([]);
     const [rulesByEui, setRulesByEui] = useState({});
     const [toast, setToast] = useState(null);
+    const [exportModal, setExportModal] = useState(null);
 
     // Load devices and rules once on mount
     useEffect(() => {
@@ -167,20 +168,45 @@ let Readings = createVisualComponent({
       setPage(1);
     }
 
-    function handleExport() {
-      const header = "Time,Device EUI,Temperature (°C),Battery (V),Status";
-      const rows = pageRows.map(r => {
-        const s = statusOf(r, rulesByEui);
-        return `"${r.processedAt}","${r.deviceEui}","${r.temperature}","${r.voltageRest}","${s.label}"`;
-      }).join("\n");
-      const blob = new Blob([header + "\n" + rows], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `readings_${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setToast("Exported readings to CSV");
+    async function handleExport() {
+      if (!exportModal) return;
+      setExportModal(m => ({ ...m, loading: true }));
+      try {
+        const base = {};
+        if (applied.eui) base.deviceEui = applied.eui;
+        if (exportModal.from) base.from = new Date(exportModal.from).toISOString();
+        if (exportModal.to) base.to = new Date(exportModal.to + "T23:59:59").toISOString();
+
+        const allRows = [];
+        let pageIndex = 0;
+        const batchSize = 100;
+        while (true) {
+          const dtoOut = await Calls.listReadings({ ...base, pageInfo: { pageSize: batchSize, pageIndex } });
+          const items = (dtoOut.itemList ?? []).filter(Boolean);
+          allRows.push(...items);
+          const serverTotal = dtoOut.pageInfo?.total ?? 0;
+          if (allRows.length >= serverTotal || items.length < batchSize) break;
+          pageIndex++;
+        }
+
+        const header = "Time,Device EUI,Temperature (°C),Battery (V),Status";
+        const lines = allRows.map(r => {
+          const s = statusOf(r, rulesByEui);
+          return `"${r.processedAt}","${r.deviceEui}","${r.temperature}","${r.voltageRest}","${s.label}"`;
+        }).join("\n");
+        const blob = new Blob([header + "\n" + lines], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `readings_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setExportModal(null);
+        setToast(`Exported ${allRows.length} readings to CSV`);
+      } catch {
+        setExportModal(m => ({ ...m, loading: false }));
+        setToast("Export failed.");
+      }
     }
 
     function sortBtn(key, label) {
@@ -219,7 +245,7 @@ let Readings = createVisualComponent({
               <p className="page-subtitle">Browse and filter sensor readings across all devices.</p>
             </div>
             <div className="page-header-actions">
-              <button className="btn-secondary" onClick={handleExport}>
+              <button className="btn-secondary" onClick={() => setExportModal({ from: applied.from, to: applied.to, loading: false })}>
                 <Uu5Elements.Icon icon="mdi-download" />
                 Export CSV
               </button>
@@ -391,6 +417,61 @@ let Readings = createVisualComponent({
           )}
 
         </div>
+        {exportModal && (
+          <div className="modal-backdrop" onClick={() => !exportModal.loading && setExportModal(null)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <header className="modal-head">
+                <h3 className="modal-title">Export Readings to CSV</h3>
+                <button className="icon-btn" onClick={() => setExportModal(null)} disabled={exportModal.loading}>
+                  <Uu5Elements.Icon icon="mdi-close" />
+                </button>
+              </header>
+              <div className="modal-body">
+                <p style={{ margin: "0 0 16px", color: "#666", fontSize: 13 }}>
+                  Choose the date range to export. Leave blank to export all readings.
+                </p>
+                <div style={{ display: "flex", gap: 16 }}>
+                  <div className="filter-field" style={{ flex: 1 }}>
+                    <span className="filter-label">From</span>
+                    <input
+                      type="date"
+                      className="filter-input"
+                      value={exportModal.from}
+                      onChange={(e) => setExportModal(m => ({ ...m, from: e.target.value }))}
+                    />
+                  </div>
+                  <div className="filter-field" style={{ flex: 1 }}>
+                    <span className="filter-label">To</span>
+                    <input
+                      type="date"
+                      className="filter-input"
+                      value={exportModal.to}
+                      onChange={(e) => setExportModal(m => ({ ...m, to: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                {applied.eui && (
+                  <div style={{ marginTop: 12, fontSize: 12, color: "#888" }}>
+                    Device filter active — export will include only the selected device.
+                  </div>
+                )}
+              </div>
+              <footer className="modal-foot">
+                <button className="btn-secondary" onClick={() => setExportModal(null)} disabled={exportModal.loading}>
+                  Cancel
+                </button>
+                <button className="btn-primary" onClick={handleExport} disabled={exportModal.loading}>
+                  {exportModal.loading ? "Exporting…" : (
+                    <>
+                      <Uu5Elements.Icon icon="mdi-download" />
+                      Export
+                    </>
+                  )}
+                </button>
+              </footer>
+            </div>
+          </div>
+        )}
       </div>
     );
     //@@viewOff:render
