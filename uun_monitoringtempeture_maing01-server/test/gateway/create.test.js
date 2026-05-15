@@ -11,43 +11,32 @@ afterAll(async () => {
   await TestHelper.teardown();
 });
 
-describe("device/create", () => {
-  test("HDS - creates device with state initial", async () => {
+describe("gateway/create", () => {
+  test("HDS - creates gateway with state initial", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
     const result = await TestHelper.executePostCommand(
-      "device/create",
-      { name: "Fridge Sensor A", deviceEui: "AABB112233440001", description: "Cold storage unit A" },
+      "gateway/create",
+      { name: "MikroTik Gateway A", uuIdentity: "1111-2222-3333-0001" },
       session,
     );
     expect(result.status).toBe(200);
-    expect(result.data.name).toBe("Fridge Sensor A");
-    expect(result.data.deviceEui).toBe("AABB112233440001");
+    expect(result.data.name).toBe("MikroTik Gateway A");
+    expect(result.data.uuIdentity).toBe("1111-2222-3333-0001");
     expect(result.data.state).toBe("initial");
     expect(result.data.uuAppErrorMap).toBeDefined();
   });
 
-  test("HDS - description is optional", async () => {
-    const session = await TestHelper.login("AwidLicenseOwner", false, false);
-    const result = await TestHelper.executePostCommand(
-      "device/create",
-      { name: "Fridge Sensor B", deviceEui: "AABB112233440002" },
-      session,
-    );
-    expect(result.status).toBe(200);
-    expect(result.data.state).toBe("initial");
-  });
-
-  test("E1 - duplicate deviceEui is rejected", async () => {
+  test("E1 - duplicate uuIdentity is rejected", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
     await TestHelper.executePostCommand(
-      "device/create",
-      { name: "Device Dup", deviceEui: "DUPLICATE001122" },
+      "gateway/create",
+      { name: "Gateway Dup 1", uuIdentity: "DUP-IDENTITY-001" },
       session,
     );
     try {
       await TestHelper.executePostCommand(
-        "device/create",
-        { name: "Device Dup 2", deviceEui: "DUPLICATE001122" },
+        "gateway/create",
+        { name: "Gateway Dup 2", uuIdentity: "DUP-IDENTITY-001" },
         session,
       );
       fail("Expected error was not thrown");
@@ -56,10 +45,10 @@ describe("device/create", () => {
     }
   });
 
-  test("E2 - missing required fields returns invalidDtoIn", async () => {
+  test("E2 - missing required fields returns error", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
     try {
-      await TestHelper.executePostCommand("device/create", { name: "No EUI" }, session);
+      await TestHelper.executePostCommand("gateway/create", { name: "No Identity" }, session);
       fail("Expected error was not thrown");
     } catch (e) {
       expect(e.status).not.toBe(200);
