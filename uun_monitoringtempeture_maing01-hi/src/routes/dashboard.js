@@ -186,6 +186,13 @@ let Dashboard = createVisualComponent({
     const lastTemp = latestReading ? parseFloat(latestReading.temperature) : null;
     const inBounds = rule && lastTemp !== null ? lastTemp >= rule.minC && lastTemp <= rule.maxC : null;
 
+    const oneHourAgoMs = Date.now() - 60 * 60 * 1000;
+    const prevTempReading = deviceReadings
+      .filter((r) => new Date(r.processedAt).getTime() <= oneHourAgoMs)
+      .sort((a, b) => new Date(b.processedAt) - new Date(a.processedAt))[0];
+    const prevTemp = prevTempReading ? parseFloat(prevTempReading.temperature) : null;
+    const tempDelta = lastTemp !== null && prevTemp !== null ? lastTemp - prevTemp : null;
+
     const selectedDevice = devices.find((d) => d.deviceEui === selectedEui);
 
     const isLoading =
@@ -255,6 +262,13 @@ let Dashboard = createVisualComponent({
                   </div>
                 )}
               </div>
+              {tempDelta !== null && (
+                <div className={`stat-card-trend ${Math.abs(tempDelta) < 0.05 ? "" : tempDelta > 0 ? "up" : "down"}`}>
+                  {Math.abs(tempDelta) < 0.05 ? "●" : tempDelta > 0 ? "▲" : "▼"}
+                  {" "}{Math.abs(tempDelta).toFixed(1)}°C
+                  <span className="stat-card-trend-window">vs 1h</span>
+                </div>
+              )}
             </div>
 
             <div className="stat-card">
@@ -471,7 +485,7 @@ let Dashboard = createVisualComponent({
                     <tr>
                       <th>Time</th>
                       <th>Temperature</th>
-                      <th>Battery</th>
+                      <th className="col-hide-sm">Battery</th>
                       <th>Status</th>
                     </tr>
                   </thead>
@@ -498,7 +512,7 @@ let Dashboard = createVisualComponent({
                             {temp.toFixed(2)} °C
                             {i === 0 && <Spark values={sparkVals} />}
                           </td>
-                          <td className="num bat-cell">{bat.toFixed(3)} V</td>
+                          <td className="num bat-cell col-hide-sm">{bat.toFixed(3)} V</td>
                           <td>
                             {out ? (
                               <SevBadge severity={temp > (rule?.maxC ?? Infinity) ? "critical" : "warning"} />

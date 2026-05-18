@@ -48,6 +48,7 @@ let AppLayout = createVisualComponent({
 
     const { identity } = useSession();
     const [profiles, setProfiles] = useState([]);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
       Calls.getWorkspace()
@@ -80,14 +81,34 @@ let AppLayout = createVisualComponent({
     //@@viewOn:render
     return (
       <div className="app-layout">
-        <div className="app-sidebar" ref={sidebarRef}>
+        {/* Mobile top bar */}
+        <div className="app-topbar">
+          <button className="app-topbar-burger" onClick={() => setSidebarOpen(true)}>
+            <Uu5Elements.Icon icon="mdi-menu" />
+          </button>
+          <div className="app-topbar-brand">
+            <span className="app-topbar-title">uuMonitor</span>
+          </div>
+          <div className="app-topbar-avatar">{initials}</div>
+        </div>
+
+        {/* Sidebar backdrop (mobile only) */}
+        <div
+          className={`app-sidebar-backdrop${sidebarOpen ? " is-open" : ""}`}
+          onClick={() => setSidebarOpen(false)}
+        />
+
+        <div className={`app-sidebar${sidebarOpen ? " is-open" : ""}`} ref={sidebarRef}>
           {/* Navigation */}
           <nav className="app-sidebar-nav">
+            <button className="app-sidebar-close" onClick={() => setSidebarOpen(false)}>
+              <Uu5Elements.Icon icon="mdi-close" />
+            </button>
             {NAV_ITEMS.map(({ route: r, icon, label }) => (
               <div
                 key={r}
                 className={`app-nav-item${currentRoute === r ? " active" : ""}`}
-                onClick={() => setRoute(r)}
+                onClick={() => { setRoute(r); setSidebarOpen(false); }}
               >
                 <Uu5Elements.Icon icon={icon} className="app-nav-icon" />
                 {label}

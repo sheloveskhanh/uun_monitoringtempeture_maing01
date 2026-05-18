@@ -60,10 +60,10 @@ function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, ope
           )}
         </div>
       </td>
-      <td style={{ color: device.description ? "#444" : "#aaa", fontSize: 13 }}>
+      <td className="col-hide-sm" style={{ color: device.description ? "#444" : "#aaa", fontSize: 13 }}>
         {device.description || "—"}
       </td>
-      <td>
+      <td className="col-hide-xs">
         <span style={{ color: "#aaa", fontSize: 12 }}>no readings</span>
       </td>
       <td>
@@ -139,7 +139,7 @@ function EditRow({ device, onSave, onCancel, pendingId }) {
             <span className="inline-field-label">Name</span>
             <input
               className="inline-input"
-              style={{ width: 220 }}
+              style={{ width: "100%", minWidth: 0 }}
               value={form.name}
               autoFocus
               onChange={(e) => setForm((v) => ({ ...v, name: e.target.value }))}
@@ -148,7 +148,7 @@ function EditRow({ device, onSave, onCancel, pendingId }) {
           <div className="device-pill-eui" style={{ marginTop: 2 }}>{device.deviceEui}</div>
         </div>
       </td>
-      <td>
+      <td className="col-hide-sm">
         <label className="inline-field">
           <span className="inline-field-label">Description</span>
           <input
@@ -160,7 +160,7 @@ function EditRow({ device, onSave, onCancel, pendingId }) {
           />
         </label>
       </td>
-      <td><span style={{ color: "#aaa", fontSize: 12 }}>no readings</span></td>
+      <td className="col-hide-xs"><span style={{ color: "#aaa", fontSize: 12 }}>no readings</span></td>
       <td>
         <span className={"state-pill " + device.state} style={{ pointerEvents: "none" }}>
           <span className={"badge-dot inline-dot " + device.state}></span>
@@ -447,8 +447,8 @@ let Devices = createVisualComponent({
                 <thead>
                   <tr>
                     <th>Device</th>
-                    <th style={{ width: 240 }}>Description</th>
-                    <th style={{ width: 200 }}>Last Reading</th>
+                    <th style={{ width: 240 }} className="col-hide-sm">Description</th>
+                    <th style={{ width: 200 }} className="col-hide-xs">Last Reading</th>
                     <th style={{ width: 200 }}>State</th>
                     <th style={{ width: 110 }}>Actions</th>
                   </tr>
