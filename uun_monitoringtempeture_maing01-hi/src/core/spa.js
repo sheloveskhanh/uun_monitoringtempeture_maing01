@@ -1,5 +1,5 @@
 //@@viewOn:imports
-import { createVisualComponent, Utils } from "uu5g05";
+import { createVisualComponent, Utils, useState, useEffect } from "uu5g05";
 import Uu5Elements from "uu5g05-elements";
 import Plus4U5 from "uu_plus4u5g02";
 import Plus4U5App from "uu_plus4u5g02-app";
@@ -60,13 +60,21 @@ const Spa = createVisualComponent({
 
   render() {
     //@@viewOn:private
+    const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
+    useEffect(() => {
+      const mq = window.matchMedia("(max-width: 768px)");
+      const handler = (e) => setIsMobile(e.matches);
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    }, []);
     //@@viewOff:private
 
     //@@viewOn:render
     return (
       <Plus4U5.SpaProvider initialLanguageList={["en", "cs"]}>
         <Uu5Elements.ModalBus>
-          <Plus4U5App.Spa routeMap={ROUTE_MAP} />
+          <Plus4U5App.Spa routeMap={ROUTE_MAP} displayTop={!isMobile} />
         </Uu5Elements.ModalBus>
       </Plus4U5.SpaProvider>
     );

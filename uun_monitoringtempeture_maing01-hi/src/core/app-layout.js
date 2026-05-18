@@ -46,9 +46,22 @@ let AppLayout = createVisualComponent({
     const [route, setRoute] = useRoute();
     const currentRoute = typeof route === "string" ? route : (route?.uu5Route || "dashboard");
 
-    const { identity } = useSession();
+    const { identity, logout } = useSession();
     const [profiles, setProfiles] = useState([]);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const avatarRef = useRef(null);
+
+    useEffect(() => {
+      if (!userMenuOpen) return;
+      const handler = (e) => {
+        if (avatarRef.current && !avatarRef.current.contains(e.target)) {
+          setUserMenuOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handler);
+      return () => document.removeEventListener("mousedown", handler);
+    }, [userMenuOpen]);
 
     useEffect(() => {
       Calls.getWorkspace()
@@ -89,7 +102,25 @@ let AppLayout = createVisualComponent({
           <div className="app-topbar-brand">
             <span className="app-topbar-title">uuMonitor</span>
           </div>
-          <div className="app-topbar-avatar">{initials}</div>
+          <div className="app-topbar-avatar-wrap" ref={avatarRef}>
+            <button className="app-topbar-avatar" onClick={() => setUserMenuOpen((v) => !v)}>
+              {initials}
+            </button>
+            {userMenuOpen && (
+              <div className="app-topbar-user-menu">
+                <div className="app-topbar-user-menu-name">{displayName}</div>
+                <div className="app-topbar-user-menu-role">{role}</div>
+                <hr className="app-topbar-user-menu-divider" />
+                <button
+                  className="app-topbar-user-menu-logout"
+                  onClick={() => { logout(); setUserMenuOpen(false); }}
+                >
+                  <Uu5Elements.Icon icon="mdi-logout" style={{ fontSize: 15 }} />
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Sidebar backdrop (mobile only) */}

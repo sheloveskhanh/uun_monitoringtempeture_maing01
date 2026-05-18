@@ -1705,6 +1705,11 @@ html, body {
   text-overflow: ellipsis;
 }
 
+.app-topbar-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .app-topbar-avatar {
   width: 36px;
   height: 36px;
@@ -1716,8 +1721,63 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+.app-topbar-avatar:hover { background: #d2e3fc; }
+
+.app-topbar-user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.13);
+  min-width: 180px;
+  padding: 12px;
+  z-index: 200;
+}
+
+.app-topbar-user-menu-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-topbar-user-menu-role {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.app-topbar-user-menu-divider {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 10px 0;
+}
+
+.app-topbar-user-menu-logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #d32f2f;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s;
+}
+.app-topbar-user-menu-logout:hover { background: #fff5f5; }
 
 /* Backdrop (mobile only, when drawer open) --------------- */
 .app-sidebar-backdrop {
