@@ -109,6 +109,75 @@
   min-width: 0;
 }
 
+/* Mobile top bar (hidden on desktop) */
+.mobile-topbar {
+  display: none;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  color: #1a1a2e;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  transition: background 0.12s;
+}
+.hamburger-btn:hover { background: #f0f0f0; }
+
+.mobile-topbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+/* Sidebar overlay (mobile) */
+.app-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 99;
+}
+
+/* ── Mobile breakpoint (xs) ─────────────────────────── */
+@media (max-width: 600px) {
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    height: 48px;
+    padding: 0 14px;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    z-index: 98;
+  }
+
+  .app-sidebar {
+    transform: translateX(-260px);
+    transition: transform 0.25s ease;
+  }
+
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .app-main {
+    margin-left: 0;
+    padding-top: 48px;
+  }
+
+  .page-shell {
+    padding: 20px 16px 32px;
+  }
+}
+
 /* ── Page shell (title + subtitle + content) ────────── */
 
 .page-shell {
