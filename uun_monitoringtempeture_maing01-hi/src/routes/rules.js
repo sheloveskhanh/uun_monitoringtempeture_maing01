@@ -231,8 +231,8 @@ let Rules = createVisualComponent({
                   <tr>
                     <th>Device</th>
                     <th>Temperature Range</th>
-                    <th style={{ width: 200 }}>Battery Threshold</th>
-                    <th style={{ width: 110 }}>Device State</th>
+                    <th style={{ width: 200 }} className="col-hide-sm">Battery Threshold</th>
+                    <th style={{ width: 110 }} className="col-hide-sm">Device State</th>
                     <th style={{ width: 120 }}>Actions</th>
                   </tr>
                 </thead>
@@ -275,7 +275,7 @@ let Rules = createVisualComponent({
                           </label>
                         </div>
                       </td>
-                      <td>
+                      <td className="col-hide-sm">
                         <label className="inline-field">
                           <span className="inline-field-label">Volts</span>
                           <input
@@ -286,7 +286,7 @@ let Rules = createVisualComponent({
                           />
                         </label>
                       </td>
-                      <td>
+                      <td className="col-hide-sm">
                         <span className="badge initial"><span className="badge-dot" />new</span>
                       </td>
                       <td>
@@ -364,7 +364,7 @@ let Rules = createVisualComponent({
                               </label>
                             </div>
                           </td>
-                          <td>
+                          <td className="col-hide-sm">
                             <label className="inline-field">
                               <span className="inline-field-label">Volts</span>
                               <input
@@ -374,7 +374,7 @@ let Rules = createVisualComponent({
                               />
                             </label>
                           </td>
-                          <td><StateBadge state={dev?.state} /></td>
+                          <td className="col-hide-sm"><StateBadge state={dev?.state} /></td>
                           <td>
                             <div className="action-cell">
                               <button
@@ -412,10 +412,10 @@ let Rules = createVisualComponent({
                             </span>
                           </div>
                         </td>
-                        <td>
+                        <td className="col-hide-sm">
                           <BatteryGauge v={rule.batteryLowV} />
                         </td>
-                        <td><StateBadge state={dev?.state} /></td>
+                        <td className="col-hide-sm"><StateBadge state={dev?.state} /></td>
                         <td>
                           <div className="action-cell">
                             <button

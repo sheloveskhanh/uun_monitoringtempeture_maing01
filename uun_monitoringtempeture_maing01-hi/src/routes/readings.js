@@ -320,8 +320,8 @@ let Readings = createVisualComponent({
                     <th style={{ width: 220 }}>{sortBtn("processedAt", "Time")}</th>
                     <th>{sortBtn("deviceEui", "Device")}</th>
                     <th style={{ width: 180 }}>{sortBtn("temperature", "Temperature")}</th>
-                    <th style={{ width: 140 }}>{sortBtn("voltageRest", "Battery")}</th>
-                    <th style={{ width: 120 }}>Status</th>
+                    <th style={{ width: 140 }} className="col-hide-sm">{sortBtn("voltageRest", "Battery")}</th>
+                    <th style={{ width: 120 }} className="col-hide-xs">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -372,10 +372,10 @@ let Readings = createVisualComponent({
                           <td className={"num temp-cell " + tempClass}>
                             {parseFloat(r.temperature).toFixed(2)} °C
                           </td>
-                          <td className="num bat-cell">
+                          <td className="num bat-cell col-hide-sm">
                             {parseFloat(r.voltageRest).toFixed(3)} V
                           </td>
-                          <td>
+                          <td className="col-hide-xs">
                             {s.kind === "ok" ? (
                               <span className="badge active">
                                 <span className="badge-dot" />

@@ -341,9 +341,9 @@ let Alerts = createVisualComponent({
                     </th>
                     <th style={{ width: 92 }}>Severity</th>
                     <th>Alert</th>
-                    <th style={{ width: 220 }}>Device</th>
+                    <th style={{ width: 220 }} className="col-hide-sm">Device</th>
                     <th style={{ width: 160 }}>Raised</th>
-                    <th style={{ width: 120 }}>Status</th>
+                    <th style={{ width: 120 }} className="col-hide-sm">Status</th>
                     <th style={{ width: 90 }}></th>
                   </tr>
                 </thead>
@@ -379,7 +379,7 @@ let Alerts = createVisualComponent({
                           <div className="alert-cell-type">{ALERT_TYPE_LABEL[alert.type] || alert.type}</div>
                           <div className="alert-cell-msg">{alert.message}</div>
                         </td>
-                        <td>
+                        <td className="col-hide-sm">
                           <div className="device-pill">
                             <div>
                               <div className="device-pill-name">{dev ? dev.name : "—"}</div>
@@ -391,7 +391,7 @@ let Alerts = createVisualComponent({
                           <div>{fmtDate(alert.createdAt)}</div>
                           <div style={{ color: "#aaa", fontSize: 11, marginTop: 2 }}>{timeAgo(alert.createdAt)}</div>
                         </td>
-                        <td>
+                        <td className="col-hide-sm">
                           {alert.status === "open" ? (
                             <span className="badge initial"><span className="badge-dot" />open</span>
                           ) : (

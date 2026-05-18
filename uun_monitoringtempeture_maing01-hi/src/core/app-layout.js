@@ -82,21 +82,28 @@ let AppLayout = createVisualComponent({
     return (
       <div className="app-layout">
         {/* Mobile top bar */}
-        <div className="mobile-topbar">
-          <button className="hamburger-btn" onClick={() => setSidebarOpen(true)}>
+        <div className="app-topbar">
+          <button className="app-topbar-burger" onClick={() => setSidebarOpen(true)}>
             <Uu5Elements.Icon icon="mdi-menu" />
           </button>
-          <span className="mobile-topbar-title">uuMonitor</span>
+          <div className="app-topbar-brand">
+            <span className="app-topbar-title">uuMonitor</span>
+          </div>
+          <div className="app-topbar-avatar">{initials}</div>
         </div>
 
-        {/* Sidebar overlay (mobile only) */}
-        {sidebarOpen && (
-          <div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)} />
-        )}
+        {/* Sidebar backdrop (mobile only) */}
+        <div
+          className={`app-sidebar-backdrop${sidebarOpen ? " is-open" : ""}`}
+          onClick={() => setSidebarOpen(false)}
+        />
 
-        <div className={`app-sidebar${sidebarOpen ? " open" : ""}`} ref={sidebarRef}>
+        <div className={`app-sidebar${sidebarOpen ? " is-open" : ""}`} ref={sidebarRef}>
           {/* Navigation */}
           <nav className="app-sidebar-nav">
+            <button className="app-sidebar-close" onClick={() => setSidebarOpen(false)}>
+              <Uu5Elements.Icon icon="mdi-close" />
+            </button>
             {NAV_ITEMS.map(({ route: r, icon, label }) => (
               <div
                 key={r}
