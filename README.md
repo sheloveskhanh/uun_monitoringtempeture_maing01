@@ -101,7 +101,32 @@ cd uun_monitoringtempeture_maing01
 
 ---
 
-### 2. Backend setup
+### 2. Configure the npm registry
+
+All `uu_*` packages are published to the **Plus4U private npm registry**, not the public npm registry. Without this step, `npm install` will fail with a "package not found" error.
+
+Both sub-projects already include an `.npmrc` file that points to the correct registry. You do not need to create it manually — just verify it is present:
+
+```
+uun_monitoringtempeture_maing01-server/.npmrc
+uun_monitoringtempeture_maing01-hi/.npmrc
+```
+
+Both files contain:
+
+```
+registry=https://repo.plus4u.net/repository/public-javascript/
+```
+
+If you prefer to set this globally instead (applies to all projects on your machine):
+
+```bash
+npm config set registry https://repo.plus4u.net/repository/public-javascript/
+```
+
+---
+
+### 3. Backend setup
 
 ```bash
 cd uun_monitoringtempeture_maing01-server
@@ -128,7 +153,7 @@ The server starts on `http://localhost:8080` by default.
 
 ---
 
-### 3. Frontend setup
+### 4. Frontend setup
 
 ```bash
 cd ../uun_monitoringtempeture_maing01-hi
@@ -140,7 +165,7 @@ The frontend dev server starts on `http://localhost:1234` and proxies API calls 
 
 ---
 
-### 4. Deploy to uuApp Cloud
+### 5. Deploy to uuApp Cloud
 
 Both the server and frontend are deployed using the uuApp devkit:
 
@@ -160,7 +185,7 @@ Refer to the official uuApp guides for first-time setup:
 
 ---
 
-### 5. Hardware & IoT bridge (optional)
+### 6. Hardware & IoT bridge (optional)
 
 > Skip this section if you only want to run the web app without real sensor data.
 
