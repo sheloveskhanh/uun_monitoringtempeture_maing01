@@ -89,7 +89,7 @@ The project was built as a bachelor's thesis at [UNICORN UNIVERSITY]([https://ww
 |---|---|
 | [Plus4U account](https://plus4u.net) | Free registration; required for uuApp cloud deployment |
 | Node.js ≥ 16 | Backend and frontend tooling |
-| MongoDB Atlas cluster | Free tier is sufficient |
+| MongoDB | Local instance for development — install locally or run via Docker (`docker run -p 27017:27017 mongo`). MongoDB Atlas is only needed for production/cloud deployment. |
 | Raspberry Pi (optional) | Only needed for the full IoT hardware pipeline |
 
 ---
@@ -135,15 +135,17 @@ cd uun_monitoringtempeture_maing01-server
 npm install
 ```
 
-Edit `env/development.json` and set your MongoDB connection string and uuApp credentials:
+Edit `env/development.json` and set your MongoDB connection string. For local development, point to your local instance:
 
 ```json
 {
   "mongodb": {
-    "uri": "mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<dbname>"
+    "uri": "mongodb://localhost:27017/<dbname>"
   }
 }
 ```
+
+> For production / cloud deployment, replace the URI with your MongoDB Atlas connection string (`mongodb+srv://...`).
 
 Start the backend in development mode:
 
