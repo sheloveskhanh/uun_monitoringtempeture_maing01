@@ -17,7 +17,7 @@ uuMonitor collects temperature data from wireless LoRaWAN sensors and displays i
 - Manage multiple devices and gateways
 - Export readings as CSV with a custom date range
 
-The project was built as a bachelor's thesis at [VUT FIT](https://www.fit.vut.cz/) and runs end-to-end on the Plus4U cloud with no manual steps after initial deployment.
+The project was built as a bachelor's thesis at [UNICORN UNIVERSITY]([https://www.fit.vut.cz/](https://unicornuniversity.net/cs/home)) and runs end-to-end on the Plus4U cloud with no manual steps after initial deployment.
 
 ---
 
