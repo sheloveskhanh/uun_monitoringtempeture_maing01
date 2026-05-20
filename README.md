@@ -6,6 +6,8 @@
 ![Platform](https://img.shields.io/badge/platform-uuApp%20Cloud-informational)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-green)
 
+**[Live demo](https://uuapp-dev.plus4u.net/uun-monitoringtempeture-maing01/30432a1b3f9bf4b331d13618c90cec94/home)** — requires a Plus4U account to log in.
+
 ---
 
 ## What is this?
