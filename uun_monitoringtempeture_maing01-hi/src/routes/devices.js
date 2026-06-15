@@ -28,7 +28,8 @@ const EMPTY_CREATE_FORM = {
 //@@viewOn:helpers
 function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, openMenuId, menuPos, onPillClick }) {
   const pillRef = useRef(null);
-  const hasRule = rules.some((r) => r.deviceEui === device.deviceEui);
+  const deviceRule = rules.find((r) => r.deviceEui === device.deviceEui);
+  const hasRule = !!deviceRule;
   const allowed = TRANSITIONS[device.state] || [];
   const isTerminal = allowed.length === 0;
   const isPending = pendingId === device.id;
@@ -57,6 +58,11 @@ function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, ope
             <span className="rule-pill missing" title="No rule — won't generate alerts">
               <Uu5Elements.Icon icon="mdi-tune-variant" style={{ fontSize: 11 }} /> no rule
             </span>
+          )}
+          {deviceRule?.notificationEmail && (
+            <div style={{ fontSize: 11, color: "#888", marginTop: 2 }}>
+              <Uu5Elements.Icon icon="mdi-email-outline" style={{ fontSize: 11 }} /> {deviceRule.notificationEmail}
+            </div>
           )}
         </div>
       </td>

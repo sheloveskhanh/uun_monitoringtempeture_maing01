@@ -47,6 +47,23 @@ describe("rule/update", () => {
     expect(String(result.data.maxC)).toBe("12");
   });
 
+  test("HDS - saves and returns notificationEmail", async () => {
+    const session = await TestHelper.login("AwidLicenseOwner", false, false);
+    const rule = await createActiveDeviceWithRule(session, "Rule Email Device", "RUPD00000003");
+
+    const result = await TestHelper.executePostCommand(
+      "rule/update",
+      { id: rule.id, notificationEmail: "test@example.com" },
+      session,
+    );
+    expect(result.status).toBe(200);
+    expect(result.data.notificationEmail).toBe("test@example.com");
+
+    // Verify it persists via list
+    const list = await TestHelper.executeGetCommand("rule/list", { deviceEui: "RUPD00000003" }, session);
+    expect(list.data.itemList[0].notificationEmail).toBe("test@example.com");
+  });
+
   test("E1 - non-existent rule returns error", async () => {
     const session = await TestHelper.login("AwidLicenseOwner", false, false);
     try {

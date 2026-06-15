@@ -4,6 +4,7 @@ const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
 const Errors = require("../api/errors/reading-error.js");
 const Warnings = require("../api/warnings/reading-warning.js");
+const { sendTemperatureAlert } = require("../utils/mailer.js");
 
 class ReadingAbl {
   constructor() {
@@ -91,6 +92,18 @@ class ReadingAbl {
           status: "open",
           createdAt: new Date(),
         });
+
+        if (alertData.type === "tempTooHigh" || alertData.type === "tempTooLow") {
+          sendTemperatureAlert({
+            deviceEui: dtoIn.deviceEui,
+            type: alertData.type,
+            message: alertData.message,
+            temperature: temp,
+            minC: rule.minC,
+            maxC: rule.maxC,
+            notificationEmail: rule.notificationEmail,
+          });
+        }
       }
     }
 
