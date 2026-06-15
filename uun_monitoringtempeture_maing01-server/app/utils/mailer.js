@@ -10,9 +10,7 @@ let transporter = null;
 function getTransporter() {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
+      service: "gmail",
       auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
   }
@@ -51,7 +49,7 @@ async function sendTemperatureAlert({ deviceEui, type, message, temperature, min
       text: body,
     });
   } catch (err) {
-    console.error("[mailer] Failed to send email alert:", err.message);
+    console.error("[mailer] Failed to send email alert:", err.message, err.stack);
   }
 }
 
