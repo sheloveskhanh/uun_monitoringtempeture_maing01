@@ -83,6 +83,7 @@ class RuleAbl {
     if (dtoIn.minC !== undefined) rule.minC = dtoIn.minC;
     if (dtoIn.maxC !== undefined) rule.maxC = dtoIn.maxC;
     if (dtoIn.batteryLowV !== undefined) rule.batteryLowV = dtoIn.batteryLowV;
+    if (dtoIn.notificationEmail !== undefined) rule.notificationEmail = dtoIn.notificationEmail;
 
     const updated = await this.dao.update(rule);
     return { ...updated, uuAppErrorMap };

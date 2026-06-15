@@ -7,7 +7,7 @@ import Calls from "../calls.js";
 //@@viewOff:imports
 
 //@@viewOn:constants
-const EMPTY_FORM = { deviceEui: "", minC: "", maxC: "", batteryLowV: "3.2" };
+const EMPTY_FORM = { deviceEui: "", minC: "", maxC: "", batteryLowV: "3.2", notificationEmail: "" };
 const SCALE_MIN = -10, SCALE_MAX = 40;
 //@@viewOff:constants
 
@@ -78,6 +78,7 @@ let Rules = createVisualComponent({
 
     const [editingId, setEditingId] = useState(null);
     const [editValues, setEditValues] = useState({});
+    const [emailOverrides, setEmailOverrides] = useState({});
     const [showCreate, setShowCreate] = useState(false);
     const [createValues, setCreateValues] = useState(EMPTY_FORM);
     const [confirmDelete, setConfirmDelete] = useState(null);
@@ -108,7 +109,7 @@ let Rules = createVisualComponent({
 
     function startEdit(rule) {
       setEditingId(rule.id);
-      setEditValues({ minC: String(rule.minC), maxC: String(rule.maxC), batteryLowV: String(rule.batteryLowV) });
+      setEditValues({ minC: String(rule.minC), maxC: String(rule.maxC), batteryLowV: String(rule.batteryLowV), notificationEmail: rule.notificationEmail ?? "" });
       setShowCreate(false);
     }
 
@@ -138,7 +139,7 @@ let Rules = createVisualComponent({
       if (!parsed) return;
       setPendingId("new");
       try {
-        await Calls.createRule({ deviceEui: createValues.deviceEui, ...parsed });
+        await Calls.createRule({ deviceEui: createValues.deviceEui, ...parsed, notificationEmail: createValues.notificationEmail || undefined });
         await ruleDataList.handlerMap.load({});
         setShowCreate(false);
         setCreateValues(EMPTY_FORM);
@@ -155,7 +156,8 @@ let Rules = createVisualComponent({
       if (!parsed) return;
       setPendingId(id);
       try {
-        await Calls.updateRule({ id, ...parsed });
+        await Calls.updateRule({ id, ...parsed, notificationEmail: editValues.notificationEmail || undefined });
+        setEmailOverrides((prev) => ({ ...prev, [id]: editValues.notificationEmail || "" }));
         await ruleDataList.handlerMap.load({});
         setEditingId(null);
         setToast("Rule updated.");
@@ -232,6 +234,7 @@ let Rules = createVisualComponent({
                     <th>Device</th>
                     <th>Temperature Range</th>
                     <th style={{ width: 200 }} className="col-hide-sm">Battery Threshold</th>
+                    <th style={{ width: 280 }} className="col-hide-sm">Notify Email</th>
                     <th style={{ width: 110 }} className="col-hide-sm">Device State</th>
                     <th style={{ width: 120 }}>Actions</th>
                   </tr>
@@ -287,6 +290,16 @@ let Rules = createVisualComponent({
                         </label>
                       </td>
                       <td className="col-hide-sm">
+                        <input
+                          className="inline-input"
+                          type="email"
+                          placeholder="email@example.com"
+                          style={{ width: "100%" }}
+                          value={createValues.notificationEmail}
+                          onChange={(e) => setCreateValues(v => ({ ...v, notificationEmail: e.target.value }))}
+                        />
+                      </td>
+                      <td className="col-hide-sm">
                         <span className="badge initial"><span className="badge-dot" />new</span>
                       </td>
                       <td>
@@ -312,7 +325,7 @@ let Rules = createVisualComponent({
                   {/* Empty state */}
                   {rules.length === 0 && !showCreate && (
                     <tr>
-                      <td colSpan={5}>
+                      <td colSpan={6}>
                         <div className="empty-note" style={{ padding: "48px 0" }}>
                           <Uu5Elements.Icon icon="mdi-tune-variant" style={{ fontSize: 28, color: "#bbb" }} />
                           <div style={{ marginTop: 8, color: "#666", fontWeight: 600 }}>No rules configured</div>
@@ -374,6 +387,15 @@ let Rules = createVisualComponent({
                               />
                             </label>
                           </td>
+                          <td className="col-hide-sm">
+                            <input
+                              className="inline-input"
+                              type="email"
+                              placeholder="email@example.com"
+                              value={editValues.notificationEmail}
+                              onChange={(e) => setEditValues(v => ({ ...v, notificationEmail: e.target.value }))}
+                            />
+                          </td>
                           <td className="col-hide-sm"><StateBadge state={dev?.state} /></td>
                           <td>
                             <div className="action-cell">
@@ -414,6 +436,9 @@ let Rules = createVisualComponent({
                         </td>
                         <td className="col-hide-sm">
                           <BatteryGauge v={rule.batteryLowV} />
+                        </td>
+                        <td className="col-hide-sm" style={{ fontSize: 13, color: (emailOverrides[rule.id] ?? rule.notificationEmail) ? "#333" : "#bbb" }}>
+                          {(emailOverrides[rule.id] ?? rule.notificationEmail) || "—"}
                         </td>
                         <td className="col-hide-sm"><StateBadge state={dev?.state} /></td>
                         <td>

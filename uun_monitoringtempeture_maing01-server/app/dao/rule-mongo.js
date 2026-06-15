@@ -26,7 +26,7 @@ class RuleMongo extends UuObjectDao {
   }
 
   async update(rule) {
-    return await super.findOneAndUpdate({ id: rule.id }, rule);
+    return await super.findOneAndUpdate({ id: rule.id }, { ...rule });
   }
 
   async delete(awid, id) {

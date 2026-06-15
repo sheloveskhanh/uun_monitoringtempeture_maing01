@@ -5,6 +5,7 @@ const ruleCreateDtoInType = shape({
   minC: string(),
   maxC: string(),
   batteryLowV: string(),
+  notificationEmail: string(),
 });
 
 const ruleListDtoInType = shape({
@@ -20,6 +21,7 @@ const ruleUpdateDtoInType = shape({
   minC: string(),
   maxC: string(),
   batteryLowV: string(),
+  notificationEmail: string(),
 });
 
 const ruleDeleteDtoInType = shape({
