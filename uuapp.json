@@ -29,7 +29,7 @@
   "uun_monitoringtempeture_maing01-server": {
     "devkit": {
       "development": {
-        "uuAppBoxUri": "https://uuapp.plus4u.net/uu-cloud-appboxregistryg01/f974cf2f5c6d4b6896fabf7a216de792/uuAppBox/get?id=6a303e6f1c05a5fe0ee55967&extended=true",
+        "uuAppBoxUri": "https://uuapp.plus4u.net/uu-cloud-appboxregistryg01/f974cf2f5c6d4b6896fabf7a216de792/uuAppBox/get?id=6a3b9a2af5fa7b56870d4d28&extended=true",
         "uuSubAppInstanceWorkloadOid": "69e5bf50ce248d18fd3d8bff"
       }
     }
