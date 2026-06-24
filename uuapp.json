@@ -1,6 +1,6 @@
 {
   "product": "uun_monitoringtempeture_maing01",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "license": "License Commercial",
   "description": {
     "en": "",
@@ -29,7 +29,7 @@
   "uun_monitoringtempeture_maing01-server": {
     "devkit": {
       "development": {
-        "uuAppBoxUri": "https://uuapp.plus4u.net/uu-cloud-appboxregistryg01/f974cf2f5c6d4b6896fabf7a216de792/uuAppBox/get?id=6a3025fda1e061fe7134647a&extended=true",
+        "uuAppBoxUri": "https://uuapp.plus4u.net/uu-cloud-appboxregistryg01/f974cf2f5c6d4b6896fabf7a216de792/uuAppBox/get?id=6a303e6f1c05a5fe0ee55967&extended=true",
         "uuSubAppInstanceWorkloadOid": "69e5bf50ce248d18fd3d8bff"
       }
     }

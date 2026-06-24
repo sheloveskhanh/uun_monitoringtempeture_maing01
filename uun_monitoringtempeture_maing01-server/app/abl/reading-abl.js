@@ -94,7 +94,7 @@ class ReadingAbl {
         });
 
         if (alertData.type === "tempTooHigh" || alertData.type === "tempTooLow") {
-          sendTemperatureAlert({
+          const emailResult = await sendTemperatureAlert({
             deviceEui: dtoIn.deviceEui,
             type: alertData.type,
             message: alertData.message,
@@ -103,6 +103,7 @@ class ReadingAbl {
             maxC: rule.maxC,
             notificationEmail: rule.notificationEmail,
           });
+          console.log("[reading] email result:", JSON.stringify(emailResult));
         }
       }
     }
