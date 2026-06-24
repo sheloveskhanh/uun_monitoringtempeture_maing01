@@ -1,17 +1,29 @@
 "use strict";
-const https = require("https");
+const nodemailer = require("nodemailer");
+
+function createTransport() {
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null;
+
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT) || 587,
+    secure: Number(SMTP_PORT) === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+}
 
 async function sendTemperatureAlert({ deviceEui, type, message, temperature, minC, maxC, notificationEmail }) {
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  if (!RESEND_API_KEY) {
-    console.warn("[mailer] RESEND_API_KEY not set — skipping email notification");
-    return;
+  const transport = createTransport();
+  if (!transport) {
+    console.warn("[mailer] SMTP not configured — skipping email notification");
+    return { success: false, error: "SMTP not configured" };
   }
 
   const recipient = notificationEmail || process.env.NOTIFICATION_EMAIL;
   if (!recipient) {
     console.warn("[mailer] No recipient email configured — skipping notification for device", deviceEui);
-    return;
+    return { success: false, error: "no recipient" };
   }
 
   const subject =
@@ -19,7 +31,7 @@ async function sendTemperatureAlert({ deviceEui, type, message, temperature, min
       ? `ALERT: Temperature too high on device ${deviceEui}`
       : `ALERT: Temperature too low on device ${deviceEui}`;
 
-  const body = [
+  const text = [
     `Device: ${deviceEui}`,
     `Reading: ${temperature}°C`,
     `Allowed range: ${minC}°C – ${maxC}°C`,
@@ -27,45 +39,19 @@ async function sendTemperatureAlert({ deviceEui, type, message, temperature, min
     message,
   ].join("\n");
 
-  const payload = JSON.stringify({
-    from: "uuMonitor <onboarding@resend.dev>",
-    to: [recipient],
-    subject,
-    text: body,
-  });
-
-  return new Promise((resolve) => {
-    const req = https.request(
-      {
-        hostname: "api.resend.com",
-        path: "/emails",
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(payload),
-        },
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => {
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            console.log("[mailer] Email sent successfully to", recipient);
-          } else {
-            console.error("[mailer] Resend API error:", res.statusCode, data);
-          }
-          resolve();
-        });
-      },
-    );
-    req.on("error", (err) => {
-      console.error("[mailer] Failed to send email alert:", err.message);
-      resolve();
+  try {
+    await transport.sendMail({
+      from: process.env.SMTP_USER,
+      to: recipient,
+      subject,
+      text,
     });
-    req.write(payload);
-    req.end();
-  });
+    console.log("[mailer] Email sent successfully to", recipient);
+    return { success: true, recipient };
+  } catch (err) {
+    console.error("[mailer] Failed to send email:", err.message);
+    return { success: false, error: err.message };
+  }
 }
 
 module.exports = { sendTemperatureAlert };
