@@ -16,6 +16,7 @@ class DeviceMongo extends UuObjectDao {
   async list(awid, filter = {}, pageInfo = {}) {
     const mongoFilter = { awid };
     if (filter.state) mongoFilter.state = filter.state;
+    if (filter.locationId) mongoFilter.locationId = filter.locationId;
     return await super.find(mongoFilter, pageInfo);
   }
 
