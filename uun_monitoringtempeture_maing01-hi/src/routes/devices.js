@@ -19,16 +19,17 @@ const TRANSITIONS = {
 };
 
 const EMPTY_CREATE_FORM = {
-  name: "", deviceEui: "", description: "",
+  name: "", deviceEui: "", description: "", locationId: "",
   addRule: true,
   minC: "2", maxC: "8", batteryLowV: "3.2",
 };
 //@@viewOff:constants
 
 //@@viewOn:helpers
-function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, openMenuId, menuPos, onPillClick }) {
+function DeviceRow({ device, rules, locations, onEdit, onDelete, onSetState, pendingId, openMenuId, menuPos, onPillClick }) {
   const pillRef = useRef(null);
   const deviceRule = rules.find((r) => r.deviceEui === device.deviceEui);
+  const locationName = device.locationId ? (locations.find((l) => l.id === device.locationId)?.name) : null;
   const hasRule = !!deviceRule;
   const allowed = TRANSITIONS[device.state] || [];
   const isTerminal = allowed.length === 0;
@@ -66,8 +67,13 @@ function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, ope
           )}
         </div>
       </td>
-      <td className="col-hide-sm" style={{ color: device.description ? "#444" : "#aaa", fontSize: 13 }}>
-        {device.description || "—"}
+      <td className="col-hide-sm" style={{ fontSize: 13 }}>
+        <div style={{ color: device.description ? "#444" : "#aaa" }}>{device.description || "—"}</div>
+        {locationName && (
+          <div style={{ color: "#1976d2", fontSize: 11, marginTop: 2 }}>
+            <Uu5Elements.Icon icon="mdi-map-marker-outline" style={{ fontSize: 11 }} /> {locationName}
+          </div>
+        )}
       </td>
       <td className="col-hide-xs">
         <span style={{ color: "#aaa", fontSize: 12 }}>no readings</span>
@@ -134,8 +140,8 @@ function DeviceRow({ device, rules, onEdit, onDelete, onSetState, pendingId, ope
   );
 }
 
-function EditRow({ device, onSave, onCancel, pendingId }) {
-  const [form, setForm] = useState({ name: device.name, description: device.description || "" });
+function EditRow({ device, locations, onSave, onCancel, pendingId }) {
+  const [form, setForm] = useState({ name: device.name, description: device.description || "", locationId: device.locationId || "" });
 
   return (
     <tr className="row-edit">
@@ -155,16 +161,34 @@ function EditRow({ device, onSave, onCancel, pendingId }) {
         </div>
       </td>
       <td className="col-hide-sm">
-        <label className="inline-field">
-          <span className="inline-field-label">Description</span>
-          <input
-            className="inline-input"
-            style={{ width: 220 }}
-            placeholder="Optional"
-            value={form.description}
-            onChange={(e) => setForm((v) => ({ ...v, description: e.target.value }))}
-          />
-        </label>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label className="inline-field">
+            <span className="inline-field-label">Description</span>
+            <input
+              className="inline-input"
+              style={{ width: 180 }}
+              placeholder="Optional"
+              value={form.description}
+              onChange={(e) => setForm((v) => ({ ...v, description: e.target.value }))}
+            />
+          </label>
+          {locations.length > 0 && (
+            <label className="inline-field">
+              <span className="inline-field-label">Location</span>
+              <select
+                className="inline-input"
+                style={{ width: 180 }}
+                value={form.locationId}
+                onChange={(e) => setForm((v) => ({ ...v, locationId: e.target.value }))}
+              >
+                <option value="">— none —</option>
+                {locations.map((l) => (
+                  <option key={l.id} value={l.id}>{l.name}</option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
       </td>
       <td className="col-hide-xs"><span style={{ color: "#aaa", fontSize: 12 }}>no readings</span></td>
       <td>
@@ -212,6 +236,7 @@ let Devices = createVisualComponent({
     //@@viewOn:private
     const [devices, setDevices] = useState([]);
     const [rules, setRules] = useState([]);
+    const [locations, setLocations] = useState([]);
     const [loadState, setLoadState] = useState("loading");
 
     const [showCreate, setShowCreate] = useState(false);
@@ -228,10 +253,11 @@ let Devices = createVisualComponent({
     const [toast, setToast] = useState(null);
 
     useEffect(() => {
-      Promise.all([Calls.listDevices({}), Calls.listRules({})])
-        .then(([devRes, ruleRes]) => {
+      Promise.all([Calls.listDevices({}), Calls.listRules({}), Calls.listLocations({})])
+        .then(([devRes, ruleRes, locRes]) => {
           setDevices((devRes.itemList ?? []).filter(Boolean));
           setRules((ruleRes.itemList ?? []).filter(Boolean));
+          setLocations((locRes.itemList ?? []).filter(Boolean));
           setLoadState("ready");
         })
         .catch(() => setLoadState("ready"));
@@ -281,9 +307,10 @@ let Devices = createVisualComponent({
     }, [devices, stateFilter, search]);
 
     async function reloadAll() {
-      const [devRes, ruleRes] = await Promise.all([Calls.listDevices({}), Calls.listRules({})]);
+      const [devRes, ruleRes, locRes] = await Promise.all([Calls.listDevices({}), Calls.listRules({}), Calls.listLocations({})]);
       setDevices((devRes.itemList ?? []).filter(Boolean));
       setRules((ruleRes.itemList ?? []).filter(Boolean));
+      setLocations((locRes.itemList ?? []).filter(Boolean));
     }
 
     async function handleCreate() {
@@ -304,6 +331,7 @@ let Devices = createVisualComponent({
       try {
         const dtoIn = { name: createForm.name.trim(), deviceEui: createForm.deviceEui.trim() };
         if (createForm.description.trim()) dtoIn.description = createForm.description.trim();
+        if (createForm.locationId) dtoIn.locationId = createForm.locationId;
         const newDevice = await Calls.createDevice(dtoIn);
 
         if (createForm.addRule) {
@@ -336,6 +364,7 @@ let Devices = createVisualComponent({
       try {
         const dtoIn = { id, name: form.name.trim() };
         if (form.description.trim()) dtoIn.description = form.description.trim();
+        if (form.locationId) dtoIn.locationId = form.locationId;
         await Calls.updateDevice(dtoIn);
         await reloadAll();
         setEditingId(null);
@@ -506,6 +535,22 @@ let Devices = createVisualComponent({
                                     onChange={(e) => setCreateForm((v) => ({ ...v, description: e.target.value }))}
                                   />
                                 </label>
+                                {locations.length > 0 && (
+                                  <label className="inline-field">
+                                    <span className="inline-field-label">Location</span>
+                                    <select
+                                      className="inline-input"
+                                      style={{ width: 240 }}
+                                      value={createForm.locationId}
+                                      onChange={(e) => setCreateForm((v) => ({ ...v, locationId: e.target.value }))}
+                                    >
+                                      <option value="">— none —</option>
+                                      {locations.map((l) => (
+                                        <option key={l.id} value={l.id}>{l.name}</option>
+                                      ))}
+                                    </select>
+                                  </label>
+                                )}
                               </div>
                             </div>
 
@@ -660,6 +705,7 @@ let Devices = createVisualComponent({
                       <EditRow
                         key={device.id}
                         device={device}
+                        locations={locations}
                         pendingId={pendingId}
                         onSave={handleUpdate}
                         onCancel={() => setEditingId(null)}
@@ -669,6 +715,7 @@ let Devices = createVisualComponent({
                         key={device.id}
                         device={device}
                         rules={rules}
+                        locations={locations}
                         pendingId={pendingId}
                         openMenuId={openMenuId}
                         menuPos={menuPos}
