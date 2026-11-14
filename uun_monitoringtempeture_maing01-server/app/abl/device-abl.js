@@ -51,7 +51,7 @@ class DeviceAbl {
     dtoIn.pageInfo.pageSize ??= 100;
     dtoIn.pageInfo.pageIndex ??= 0;
 
-    const filter = { state: dtoIn.state };
+    const filter = { state: dtoIn.state, locationId: dtoIn.locationId };
     const dtoOut = await this.dao.list(awid, filter, dtoIn.pageInfo);
     dtoOut.uuAppErrorMap = uuAppErrorMap;
     return dtoOut;
@@ -100,6 +100,7 @@ class DeviceAbl {
 
     if (dtoIn.name !== undefined) device.name = dtoIn.name;
     if (dtoIn.description !== undefined) device.description = dtoIn.description;
+    if (dtoIn.locationId !== undefined) device.locationId = dtoIn.locationId;
 
     const updated = await this.dao.update(device);
     return { ...updated, uuAppErrorMap };

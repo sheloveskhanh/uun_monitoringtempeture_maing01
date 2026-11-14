@@ -98,6 +98,26 @@ const Calls = {
     return Calls.call("cmdPost", commandUri, dtoIn);
   },
 
+  listLocations(dtoIn) {
+    const commandUri = Calls.getCommandUri("location/list");
+    return Calls.call("cmdGet", commandUri, dtoIn);
+  },
+
+  createLocation(dtoIn) {
+    const commandUri = Calls.getCommandUri("location/create");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  updateLocation(dtoIn) {
+    const commandUri = Calls.getCommandUri("location/update");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
+  deleteLocation(dtoIn) {
+    const commandUri = Calls.getCommandUri("location/delete");
+    return Calls.call("cmdPost", commandUri, dtoIn);
+  },
+
   acknowledgeAlert(dtoIn) {
     const commandUri = Calls.getCommandUri("alert/acknowledge");
     return Calls.call("cmdPost", commandUri, dtoIn);

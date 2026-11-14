@@ -15,6 +15,7 @@ const Readings = Utils.Component.lazy(() => import("../routes/readings.js"));
 const Rules = Utils.Component.lazy(() => import("../routes/rules.js"));
 const Alerts = Utils.Component.lazy(() => import("../routes/alerts.js"));
 const Devices = Utils.Component.lazy(() => import("../routes/devices.js"));
+const Locations = Utils.Component.lazy(() => import("../routes/locations.js"));
 //@@viewOff:imports
 
 //@@viewOn:constants
@@ -29,6 +30,7 @@ const ROUTE_MAP = {
   rules: withLayout(Rules),
   alerts: withLayout(Alerts),
   devices: withLayout(Devices),
+  locations: withLayout(Locations),
   "sys/uuAppWorkspace/initUve": (props) => <InitAppWorkspace {...props} />,
   controlPanel: (props) => <ControlPanel {...props} />,
   "*": () => (

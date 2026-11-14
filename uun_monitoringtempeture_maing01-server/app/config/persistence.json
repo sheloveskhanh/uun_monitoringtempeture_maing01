@@ -21,6 +21,9 @@
         },
         "alert": {
           "realization": "dao/AlertMongo"
+        },
+        "location": {
+          "realization": "dao/LocationMongo"
         }
       }
     }

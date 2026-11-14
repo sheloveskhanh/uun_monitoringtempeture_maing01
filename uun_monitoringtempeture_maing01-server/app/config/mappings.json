@@ -125,6 +125,31 @@
         "realization": "api/controllers/AlertController.delete",
         "httpMethod": "POST",
         "type": "CMD"
+      },
+      "location/create": {
+        "realization": "api/controllers/LocationController.create",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "location/get": {
+        "realization": "api/controllers/LocationController.get",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "location/list": {
+        "realization": "api/controllers/LocationController.list",
+        "httpMethod": "GET",
+        "type": "CMD"
+      },
+      "location/update": {
+        "realization": "api/controllers/LocationController.update",
+        "httpMethod": "POST",
+        "type": "CMD"
+      },
+      "location/delete": {
+        "realization": "api/controllers/LocationController.delete",
+        "httpMethod": "POST",
+        "type": "CMD"
       }
     }
   }
