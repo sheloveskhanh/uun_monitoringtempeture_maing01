@@ -3,7 +3,7 @@ jest.mock("nodemailer", () => ({
   createTransport: jest.fn(() => ({ sendMail: mockSendMail })),
 }));
 
-const { sendTemperatureAlert } = require("../../app/utils/mailer.js");
+const { sendTemperatureAlert, sendBatteryLowAlert } = require("../../app/utils/mailer.js");
 
 describe("sendTemperatureAlert", () => {
   beforeEach(() => {
@@ -142,5 +142,68 @@ describe("sendTemperatureAlert", () => {
     expect(mockSendMail).not.toHaveBeenCalled();
     expect(result.success).toBe(false);
     expect(result.error).toContain("no recipient");
+  });
+});
+
+describe("sendBatteryLowAlert", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    process.env.SMTP_HOST = "smtp.plus4u.net";
+    process.env.SMTP_PORT = "587";
+    process.env.SMTP_USER = "test@plus4u.net";
+    process.env.SMTP_PASS = "testpass";
+    process.env.NOTIFICATION_EMAIL = "notify@example.com";
+  });
+
+  afterEach(() => {
+    delete process.env.SMTP_HOST;
+    delete process.env.SMTP_PORT;
+    delete process.env.SMTP_USER;
+    delete process.env.SMTP_PASS;
+    delete process.env.NOTIFICATION_EMAIL;
+  });
+
+  test("sends correct subject and body for battery low", async () => {
+    mockSendMail.mockResolvedValue({});
+
+    await sendBatteryLowAlert({
+      deviceEui: "AABBCCDDEEFF",
+      voltage: 2.8,
+      batteryLowV: 3.0,
+    });
+
+    expect(mockSendMail).toHaveBeenCalledTimes(1);
+    const mail = mockSendMail.mock.calls[0][0];
+    expect(mail.subject).toContain("Battery low");
+    expect(mail.subject).toContain("AABBCCDDEEFF");
+    expect(mail.text).toContain("2.8V");
+    expect(mail.text).toContain("3V");
+    expect(mail.to).toBe("notify@example.com");
+  });
+
+  test("uses notificationEmail param over NOTIFICATION_EMAIL env var", async () => {
+    mockSendMail.mockResolvedValue({});
+
+    await sendBatteryLowAlert({
+      deviceEui: "AABBCCDDEEFF",
+      voltage: 2.8,
+      batteryLowV: 3.0,
+      notificationEmail: "custom@example.com",
+    });
+
+    const mail = mockSendMail.mock.calls[0][0];
+    expect(mail.to).toBe("custom@example.com");
+  });
+
+  test("returns success when email is sent", async () => {
+    mockSendMail.mockResolvedValue({});
+
+    const result = await sendBatteryLowAlert({
+      deviceEui: "AABBCCDDEEFF",
+      voltage: 2.8,
+      batteryLowV: 3.0,
+    });
+
+    expect(result.success).toBe(true);
   });
 });

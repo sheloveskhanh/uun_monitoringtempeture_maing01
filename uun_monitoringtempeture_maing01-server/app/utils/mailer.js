@@ -13,7 +13,7 @@ function createTransport() {
   });
 }
 
-async function sendTemperatureAlert({ deviceEui, type, message, temperature, minC, maxC, notificationEmail }) {
+async function _send({ deviceEui, subject, text, notificationEmail }) {
   const transport = createTransport();
   if (!transport) {
     console.warn("[mailer] SMTP not configured — skipping email notification");
@@ -26,6 +26,17 @@ async function sendTemperatureAlert({ deviceEui, type, message, temperature, min
     return { success: false, error: "no recipient" };
   }
 
+  try {
+    await transport.sendMail({ from: process.env.SMTP_USER, to: recipient, subject, text });
+    console.log("[mailer] Email sent successfully to", recipient);
+    return { success: true, recipient };
+  } catch (err) {
+    console.error("[mailer] Failed to send email:", err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+async function sendTemperatureAlert({ deviceEui, type, message, temperature, minC, maxC, notificationEmail }) {
   const subject =
     type === "tempTooHigh"
       ? `ALERT: Temperature too high on device ${deviceEui}`
@@ -39,19 +50,18 @@ async function sendTemperatureAlert({ deviceEui, type, message, temperature, min
     message,
   ].join("\n");
 
-  try {
-    await transport.sendMail({
-      from: process.env.SMTP_USER,
-      to: recipient,
-      subject,
-      text,
-    });
-    console.log("[mailer] Email sent successfully to", recipient);
-    return { success: true, recipient };
-  } catch (err) {
-    console.error("[mailer] Failed to send email:", err.message);
-    return { success: false, error: err.message };
-  }
+  return _send({ deviceEui, subject, text, notificationEmail });
 }
 
-module.exports = { sendTemperatureAlert };
+async function sendBatteryLowAlert({ deviceEui, voltage, batteryLowV, notificationEmail }) {
+  const subject = `ALERT: Battery low on device ${deviceEui}`;
+  const text = [
+    `Device: ${deviceEui}`,
+    `Battery voltage: ${voltage}V`,
+    `Threshold: ${batteryLowV}V`,
+  ].join("\n");
+
+  return _send({ deviceEui, subject, text, notificationEmail });
+}
+
+module.exports = { sendTemperatureAlert, sendBatteryLowAlert };

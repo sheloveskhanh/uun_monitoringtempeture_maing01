@@ -4,7 +4,7 @@ const { DaoFactory } = require("uu_appg01_server").ObjectStore;
 const { ValidationHelper } = require("uu_appg01_server").AppServer;
 const Errors = require("../api/errors/reading-error.js");
 const Warnings = require("../api/warnings/reading-warning.js");
-const { sendTemperatureAlert } = require("../utils/mailer.js");
+const { sendTemperatureAlert, sendBatteryLowAlert } = require("../utils/mailer.js");
 
 class ReadingAbl {
   constructor() {
@@ -104,6 +104,14 @@ class ReadingAbl {
             notificationEmail: rule.notificationEmail,
           });
           console.log("[reading] email result:", JSON.stringify(emailResult));
+        } else if (alertData.type === "batteryLow") {
+          const emailResult = await sendBatteryLowAlert({
+            deviceEui: dtoIn.deviceEui,
+            voltage,
+            batteryLowV: rule.batteryLowV,
+            notificationEmail: rule.notificationEmail,
+          });
+          console.log("[reading] battery low email result:", JSON.stringify(emailResult));
         }
       }
     }
