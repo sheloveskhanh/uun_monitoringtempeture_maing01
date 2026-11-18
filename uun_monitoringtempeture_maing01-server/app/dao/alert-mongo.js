@@ -30,6 +30,10 @@ class AlertMongo extends UuObjectDao {
     return await super.findOne({ awid, id });
   }
 
+  async findOpenByDeviceEuiAndType(awid, deviceEui, type) {
+    return await super.findOne({ awid, deviceEui, type, status: "open" });
+  }
+
   async update(alert) {
     return await super.findOneAndUpdate({ id: alert.id }, alert);
   }

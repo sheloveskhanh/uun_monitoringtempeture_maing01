@@ -26,7 +26,7 @@ const EMPTY_CREATE_FORM = {
 //@@viewOff:constants
 
 //@@viewOn:helpers
-function DeviceRow({ device, rules, locations, onEdit, onDelete, onSetState, pendingId, openMenuId, menuPos, onPillClick }) {
+function DeviceRow({ device, rules, locations, lastReading, onEdit, onDelete, onSetState, pendingId, openMenuId, menuPos, onPillClick }) {
   const pillRef = useRef(null);
   const deviceRule = rules.find((r) => r.deviceEui === device.deviceEui);
   const locationName = device.locationId ? (locations.find((l) => l.id === device.locationId)?.name) : null;
@@ -76,7 +76,16 @@ function DeviceRow({ device, rules, locations, onEdit, onDelete, onSetState, pen
         )}
       </td>
       <td className="col-hide-xs">
-        <span style={{ color: "#aaa", fontSize: 12 }}>no readings</span>
+        {lastReading ? (
+          <div style={{ fontSize: 13 }}>
+            <span style={{ fontWeight: 500 }}>{parseFloat(lastReading.temperature).toFixed(1)} °C</span>
+            <div style={{ color: "#aaa", fontSize: 11 }}>
+              {new Date(lastReading.processedAt).toLocaleString("cs-CZ", { dateStyle: "short", timeStyle: "short" })}
+            </div>
+          </div>
+        ) : (
+          <span style={{ color: "#aaa", fontSize: 12 }}>no readings</span>
+        )}
       </td>
       <td>
         <div className="state-cell" onClick={(e) => e.stopPropagation()}>
@@ -140,7 +149,7 @@ function DeviceRow({ device, rules, locations, onEdit, onDelete, onSetState, pen
   );
 }
 
-function EditRow({ device, locations, onSave, onCancel, pendingId }) {
+function EditRow({ device, locations, lastReading, onSave, onCancel, pendingId }) {
   const [form, setForm] = useState({ name: device.name, description: device.description || "", locationId: device.locationId || "" });
 
   return (
@@ -190,7 +199,13 @@ function EditRow({ device, locations, onSave, onCancel, pendingId }) {
           )}
         </div>
       </td>
-      <td className="col-hide-xs"><span style={{ color: "#aaa", fontSize: 12 }}>no readings</span></td>
+      <td className="col-hide-xs">
+        {lastReading ? (
+          <span style={{ fontSize: 13, fontWeight: 500 }}>{parseFloat(lastReading.temperature).toFixed(1)} °C</span>
+        ) : (
+          <span style={{ color: "#aaa", fontSize: 12 }}>no readings</span>
+        )}
+      </td>
       <td>
         <span className={"state-pill " + device.state} style={{ pointerEvents: "none" }}>
           <span className={"badge-dot inline-dot " + device.state}></span>
@@ -237,6 +252,7 @@ let Devices = createVisualComponent({
     const [devices, setDevices] = useState([]);
     const [rules, setRules] = useState([]);
     const [locations, setLocations] = useState([]);
+    const [lastReadings, setLastReadings] = useState({});
     const [loadState, setLoadState] = useState("loading");
 
     const [showCreate, setShowCreate] = useState(false);
@@ -255,10 +271,18 @@ let Devices = createVisualComponent({
     useEffect(() => {
       Promise.all([Calls.listDevices({}), Calls.listRules({}), Calls.listLocations({})])
         .then(([devRes, ruleRes, locRes]) => {
-          setDevices((devRes.itemList ?? []).filter(Boolean));
+          const devList = (devRes.itemList ?? []).filter(Boolean);
+          setDevices(devList);
           setRules((ruleRes.itemList ?? []).filter(Boolean));
           setLocations((locRes.itemList ?? []).filter(Boolean));
           setLoadState("ready");
+          Promise.all(
+            devList.map((d) =>
+              Calls.listReadings({ deviceEui: d.deviceEui, pageInfo: { pageIndex: 0, pageSize: 1 } })
+                .then((r) => [d.deviceEui, (r.itemList ?? [])[0] ?? null])
+                .catch(() => [d.deviceEui, null])
+            )
+          ).then((pairs) => setLastReadings(Object.fromEntries(pairs)));
         })
         .catch(() => setLoadState("ready"));
     }, []);
@@ -706,6 +730,7 @@ let Devices = createVisualComponent({
                         key={device.id}
                         device={device}
                         locations={locations}
+                        lastReading={lastReadings[device.deviceEui] ?? null}
                         pendingId={pendingId}
                         onSave={handleUpdate}
                         onCancel={() => setEditingId(null)}
@@ -716,6 +741,7 @@ let Devices = createVisualComponent({
                         device={device}
                         rules={rules}
                         locations={locations}
+                        lastReading={lastReadings[device.deviceEui] ?? null}
                         pendingId={pendingId}
                         openMenuId={openMenuId}
                         menuPos={menuPos}

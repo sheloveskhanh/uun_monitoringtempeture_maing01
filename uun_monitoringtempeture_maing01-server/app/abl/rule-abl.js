@@ -32,6 +32,10 @@ class RuleAbl {
       throw new Errors.Create.DeviceIsNotActive({ uuAppErrorMap }, { deviceEui: dtoIn.deviceEui, currentState: device.state });
     }
 
+    if (dtoIn.minC !== undefined && dtoIn.maxC !== undefined && parseFloat(dtoIn.minC) >= parseFloat(dtoIn.maxC)) {
+      throw new Errors.Create.InvalidTemperatureRange({ uuAppErrorMap }, { minC: dtoIn.minC, maxC: dtoIn.maxC });
+    }
+
     const existing = await this.dao.getByDeviceEui(awid, dtoIn.deviceEui);
     if (existing) {
       throw new Errors.Create.RuleAlreadyExists({ uuAppErrorMap }, { deviceEui: dtoIn.deviceEui });
@@ -78,6 +82,12 @@ class RuleAbl {
     const rule = await this.dao.get(awid, dtoIn.id);
     if (!rule) {
       throw new Errors.Update.RuleNotFound({ uuAppErrorMap }, { id: dtoIn.id });
+    }
+
+    const newMinC = dtoIn.minC !== undefined ? parseFloat(dtoIn.minC) : (rule.minC !== undefined ? parseFloat(rule.minC) : undefined);
+    const newMaxC = dtoIn.maxC !== undefined ? parseFloat(dtoIn.maxC) : (rule.maxC !== undefined ? parseFloat(rule.maxC) : undefined);
+    if (newMinC !== undefined && newMaxC !== undefined && newMinC >= newMaxC) {
+      throw new Errors.Update.InvalidTemperatureRange({ uuAppErrorMap }, { minC: newMinC, maxC: newMaxC });
     }
 
     if (dtoIn.minC !== undefined) rule.minC = dtoIn.minC;

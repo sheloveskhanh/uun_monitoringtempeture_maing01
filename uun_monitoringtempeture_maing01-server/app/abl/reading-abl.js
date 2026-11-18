@@ -83,6 +83,9 @@ class ReadingAbl {
       }
 
       for (const alertData of alerts) {
+        const existing = await this.alertDao.findOpenByDeviceEuiAndType(awid, dtoIn.deviceEui, alertData.type);
+        if (existing) continue;
+
         await this.alertDao.create({
           awid,
           deviceEui: dtoIn.deviceEui,

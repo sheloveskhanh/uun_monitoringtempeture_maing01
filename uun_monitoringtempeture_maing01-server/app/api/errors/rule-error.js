@@ -37,6 +37,14 @@ const Create = {
       this.message = "A rule for this deviceEui already exists. Use rule/update to change it.";
     }
   },
+
+  InvalidTemperatureRange: class extends MonitoringtempetureMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${Create.UC_CODE}invalidTemperatureRange`;
+      this.message = "minC must be less than maxC.";
+    }
+  },
 };
 
 const List = {
@@ -67,6 +75,14 @@ const Update = {
       super(...arguments);
       this.code = `${Update.UC_CODE}ruleNotFound`;
       this.message = "Rule with given id does not exist.";
+    }
+  },
+
+  InvalidTemperatureRange: class extends MonitoringtempetureMainUseCaseError {
+    constructor() {
+      super(...arguments);
+      this.code = `${Update.UC_CODE}invalidTemperatureRange`;
+      this.message = "minC must be less than maxC.";
     }
   },
 };
