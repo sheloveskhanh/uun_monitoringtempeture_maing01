@@ -142,6 +142,8 @@ class ReadingAbl {
       deviceEui: dtoIn.deviceEui,
       from: dtoIn.from,
       to: dtoIn.to,
+      sortBy: dtoIn.sortBy,
+      sortDir: dtoIn.sortDir,
     };
 
     const dtoOut = await this.dao.list(awid, filter, dtoIn.pageInfo);

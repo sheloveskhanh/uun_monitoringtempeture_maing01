@@ -86,10 +86,10 @@ let Readings = createVisualComponent({
       }).catch(() => {});
     }, []);
 
-    // Reload readings when applied filters or page changes
+    // Reload readings when applied filters, page, or sort changes
     useEffect(() => {
       let cancelled = false;
-      const dtoIn = { pageInfo: { pageSize: PAGE_SIZE, pageIndex: page - 1 } };
+      const dtoIn = { pageInfo: { pageSize: PAGE_SIZE, pageIndex: page - 1 }, sortBy: sortKey, sortDir };
       if (applied.eui) dtoIn.deviceEui = applied.eui;
       if (applied.from) dtoIn.from = new Date(applied.from).toISOString();
       if (applied.to) dtoIn.to = new Date(applied.to + "T23:59:59").toISOString();
@@ -102,7 +102,7 @@ let Readings = createVisualComponent({
         if (!cancelled) setLoadState("ready");
       });
       return () => { cancelled = true; };
-    }, [applied, page]);
+    }, [applied, page, sortKey, sortDir]);
 
     useEffect(() => {
       if (!toast) return;
@@ -111,30 +111,9 @@ let Readings = createVisualComponent({
     }, [toast]);
 
     const pageRows = useMemo(() => {
-      let rows = readings;
-      if (applied.status !== "all") {
-        rows = rows.filter(r => statusOf(r, rulesByEui).kind === applied.status);
-      }
-      return [...rows].sort((a, b) => {
-        let av, bv;
-        if (sortKey === "processedAt") {
-          av = new Date(a.processedAt).getTime();
-          bv = new Date(b.processedAt).getTime();
-        } else if (sortKey === "temperature") {
-          av = parseFloat(a.temperature);
-          bv = parseFloat(b.temperature);
-        } else if (sortKey === "voltageRest") {
-          av = parseFloat(a.voltageRest);
-          bv = parseFloat(b.voltageRest);
-        } else if (sortKey === "deviceEui") {
-          av = a.deviceEui;
-          bv = b.deviceEui;
-        }
-        if (av < bv) return sortDir === "asc" ? -1 : 1;
-        if (av > bv) return sortDir === "asc" ? 1 : -1;
-        return 0;
-      });
-    }, [readings, applied.status, sortKey, sortDir, rulesByEui]);
+      if (applied.status === "all") return readings;
+      return readings.filter(r => statusOf(r, rulesByEui).kind === applied.status);
+    }, [readings, applied.status, rulesByEui]);
 
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -215,8 +194,8 @@ let Readings = createVisualComponent({
         <button
           className={"th-sort" + (isActive ? " active" : "")}
           onClick={() => {
-            if (isActive) setSortDir(d => d === "asc" ? "desc" : "asc");
-            else { setSortKey(key); setSortDir(key === "processedAt" ? "desc" : "asc"); }
+            if (isActive) { setSortDir(d => d === "asc" ? "desc" : "asc"); setPage(1); }
+            else { setSortKey(key); setSortDir(key === "processedAt" ? "desc" : "asc"); setPage(1); }
           }}
         >
           {label}
