@@ -63,7 +63,7 @@ class AlertAbl {
     return dtoOut;
   }
 
-  async acknowledge(awid, dtoIn) {
+  async acknowledge(awid, dtoIn, uuIdentity) {
     let uuAppErrorMap = {};
 
     const validationResult = this.validator.validate("alertAcknowledgeDtoInType", dtoIn);
@@ -82,6 +82,7 @@ class AlertAbl {
 
     alert.status = "acknowledged";
     alert.acknowledgedAt = new Date();
+    alert.acknowledgedBy = uuIdentity;
 
     const updated = await this.dao.update(alert);
     return { ...updated, uuAppErrorMap };

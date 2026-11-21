@@ -11,7 +11,7 @@ class AlertController {
   }
 
   acknowledge(ucEnv) {
-    return AlertAbl.acknowledge(ucEnv.getUri().getAwid(), ucEnv.getDtoIn());
+    return AlertAbl.acknowledge(ucEnv.getUri().getAwid(), ucEnv.getDtoIn(), ucEnv.getSession().getIdentity().getUuIdentity());
   }
 
   delete(ucEnv) {

@@ -19,7 +19,9 @@ class ReadingMongo extends UuObjectDao {
       if (filter.from) mongoFilter.processedAt.$gte = new Date(filter.from);
       if (filter.to) mongoFilter.processedAt.$lte = new Date(filter.to);
     }
-    return await super.find(mongoFilter, pageInfo, { processedAt: -1 });
+    const sortField = filter.sortBy || "processedAt";
+    const sortOrder = filter.sortDir === "asc" ? 1 : -1;
+    return await super.find(mongoFilter, pageInfo, { [sortField]: sortOrder });
   }
 }
 

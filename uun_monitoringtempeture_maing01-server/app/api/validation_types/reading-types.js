@@ -17,6 +17,8 @@ const readingListDtoInType = shape({
   deviceEui: string(),
   from: string(),
   to: string(),
+  sortBy: oneOf(["processedAt", "temperature", "voltageRest", "deviceEui"]),
+  sortDir: oneOf(["asc", "desc"]),
   pageInfo: shape({
     pageIndex: integer(0, 1000000000),
     pageSize: integer(1, 1000),
